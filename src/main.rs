@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{asset::AssetServerSettings, prelude::*};
 use serde::Deserialize;
 use std::{
     fs,
@@ -32,7 +32,7 @@ fn main() {
 }
 
 fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
-    for d in fs::read_dir("games").unwrap().filter_map(|e| e.ok()) {
+    for d in fs::read_dir("assets/games").unwrap().filter_map(|e| e.ok()) {
         info!("{:?}", d.path());
         let game_summary = get_game_summary(d.path());
         info!("{:?}", game_summary);
@@ -41,8 +41,14 @@ fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
             title: game_summary.title,
             description: game_summary.description,
             author: game_summary.author,
-            screenshot: asset_server.load(d.path().join("screenshot.png")),
-        })
+            screenshot: asset_server.load(
+                d.path()
+                    .into_iter()
+                    .skip(1)
+                    .collect::<PathBuf>() //skip "assets/"
+                    .join("screenshot.png"),
+            ),
+        });
     }
 }
 
