@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, ui::FocusPolicy};
 use serde::Deserialize;
 use std::{
     fs,
@@ -22,6 +22,10 @@ struct GameSummary {
 }
 
 struct Games(Vec<Game>);
+struct SelectedIndex(u32);
+
+#[derive(Component)]
+struct GameIndex(u32);
 
 fn main() {
     App::new()
@@ -33,8 +37,12 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .insert_resource(Games(Vec::new()))
+        .insert_resource(SelectedIndex(0))
         .add_startup_system(load_game_folder)
         .add_startup_system(ui_setup.after(load_game_folder))
+        .add_system(ui_selected_color_system)
+        .add_system(select_by_keybord)
+        .add_system(select_by_cursor)
         .run();
 }
 
@@ -65,7 +73,7 @@ fn get_game_summary<P: AsRef<Path>>(path: P) -> GameSummary {
     toml::from_str::<GameSummary>(&summary_file_content).unwrap()
 }
 
-fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>,games:Res<Games>) {
+fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
     cmd.spawn_bundle(Camera2dBundle::default());
     cmd.spawn_bundle(
         //root node
@@ -136,7 +144,7 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>,games:Res<Games>) 
                     ..Default::default()
                 })
                 .with_children(|p| {
-                    for i in /*1..18*/ games.0.iter() {
+                    for (idx, game) in games.0.iter().enumerate() {
                         //game card node
                         p.spawn_bundle(NodeBundle {
                             style: Style {
@@ -148,9 +156,9 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>,games:Res<Games>) 
                         })
                         .with_children(|p| {
                             //game title
-                            p.spawn_bundle(
-                                TextBundle::from_section(
-                                    i.title.to_owned(),
+                            p.spawn_bundle({
+                                let mut tmp = TextBundle::from_section(
+                                    game.title.to_owned(),
                                     TextStyle {
                                         font: asset_server
                                             .load("fonts/NotoSansCJKjp-DemiLight.otf"),
@@ -167,12 +175,54 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>,games:Res<Games>) 
                                         ..Default::default()
                                     },
                                     ..Default::default()
-                                }),
-                            );
-                        });
+                                });
+                                tmp.focus_policy = FocusPolicy::Pass;
+                                tmp
+                            });
+                        })
+                        .insert(GameIndex(idx as u32))
+                        .insert(Interaction::default());
                     }
                 });
             });
         });
     });
+}
+
+fn ui_selected_color_system(
+    selected_idx: Res<SelectedIndex>,
+    mut ui_games: Query<(&mut UiColor, &GameIndex)>,
+) {
+    for (mut color, idx) in ui_games.iter_mut() {
+        *color = if idx.0 == selected_idx.0 {
+            Color::rgb(0.44, 0.63, 0.7).into()
+        } else {
+            Color::rgb(0.54, 0.73, 0.8).into()
+        }
+    }
+}
+
+fn select_by_keybord(
+    key_input: Res<Input<KeyCode>>,
+    mut selected_idx: ResMut<SelectedIndex>,
+    games: Res<Games>,
+) {
+    if key_input.just_pressed(KeyCode::Up) && selected_idx.0 != 0 {
+        selected_idx.0 -= 1;
+    }
+
+    if key_input.just_pressed(KeyCode::Down) && selected_idx.0 != games.0.len() as u32 - 1 {
+        selected_idx.0 += 1;
+    }
+}
+
+fn select_by_cursor(
+    query: Query<(&Interaction, &GameIndex), Changed<Interaction>>,
+    mut selected_idx: ResMut<SelectedIndex>,
+) {
+    for e in query.iter() {
+        if *e.0 == Interaction::Clicked {
+            selected_idx.0 = e.1 .0;
+        }
+    }
 }
