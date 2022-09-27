@@ -1,8 +1,9 @@
 use bevy::{prelude::*, ui::FocusPolicy};
 use serde::Deserialize;
 use std::{
-    fs,
+    env, fs,
     path::{Path, PathBuf},
+    process::Command,
 };
 
 struct Game {
@@ -43,6 +44,7 @@ fn main() {
         .add_system(ui_selected_color_system)
         .add_system(select_by_keybord)
         .add_system(select_by_cursor)
+        .add_system(run_game)
         .run();
 }
 
@@ -224,5 +226,16 @@ fn select_by_cursor(
         if *e.0 == Interaction::Clicked {
             selected_idx.0 = e.1 .0;
         }
+    }
+}
+
+fn run_game(key_input: Res<Input<KeyCode>>, selected_idx: Res<SelectedIndex>, games: Res<Games>) {
+    if key_input.just_pressed(KeyCode::Return) {
+        let path = env::current_dir()
+            .unwrap()
+            .join(&games.0[selected_idx.0 as usize].path);
+        let mut game_cmd = Command::new(&path);
+        game_cmd.current_dir(path.parent().unwrap());
+        game_cmd.spawn().expect("failed run game");
     }
 }
