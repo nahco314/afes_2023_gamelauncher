@@ -44,7 +44,8 @@ fn main() {
         .add_system(ui_selected_color_system)
         .add_system(select_by_keybord)
         .add_system(select_by_cursor)
-        .add_system(run_game)
+        .add_system(run_by_keybord_sys)
+        .add_system(play_button_sys)
         .run();
 }
 
@@ -188,6 +189,36 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
                 });
             });
         });
+    })
+    .with_children(|p| {
+        //play button
+        p.spawn_bundle(ButtonBundle {
+            style: Style {
+                size: Size::new(Val::Px(200.), Val::Px(60.)),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                position_type: PositionType::Absolute,
+                position: UiRect {
+                    bottom: Val::Px(30.),
+                    right: Val::Px(35.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            color: Color::LIME_GREEN.into(),
+            ..Default::default()
+        })
+        .with_children(|p| {
+            // "プレイ" text
+            p.spawn_bundle(TextBundle::from_section(
+                "プレイ",
+                TextStyle {
+                    font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                    font_size: 40.,
+                    color: Color::WHITE,
+                },
+            ));
+        });
     });
 }
 
@@ -229,13 +260,33 @@ fn select_by_cursor(
     }
 }
 
-fn run_game(key_input: Res<Input<KeyCode>>, selected_idx: Res<SelectedIndex>, games: Res<Games>) {
+fn run_by_keybord_sys(
+    key_input: Res<Input<KeyCode>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+) {
     if key_input.just_pressed(KeyCode::Return) {
-        let path = env::current_dir()
-            .unwrap()
-            .join(&games.0[selected_idx.0 as usize].path);
-        let mut game_cmd = Command::new(&path);
-        game_cmd.current_dir(path.parent().unwrap());
-        game_cmd.spawn().expect("failed run game");
+        run_game(&selected_idx, &games);
+    }
+}
+
+fn run_game(selected_idx: &SelectedIndex, games: &Games) {
+    let abs_path = env::current_dir()
+        .unwrap()
+        .join(&games.0[selected_idx.0 as usize].path);
+    let mut game_cmd = Command::new(&abs_path);
+    game_cmd.current_dir(abs_path.parent().unwrap());
+    game_cmd.spawn().expect("failed run game");
+}
+
+fn play_button_sys(
+    q: Query<(&Interaction,), (Changed<Interaction>, With<Button>)>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+) {
+    if let Ok(q) = q.get_single() {
+        if *q.0 == Interaction::Clicked {
+            run_game(&selected_idx, &games);
+        }
     }
 }
