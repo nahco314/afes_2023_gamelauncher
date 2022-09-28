@@ -16,7 +16,7 @@ struct Game {
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
-struct GameSummary {
+struct GameManifest {
     title: String,
     description: String,
     author: String,
@@ -52,13 +52,13 @@ fn main() {
 fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
     for d in fs::read_dir("assets/games").unwrap().filter_map(|e| e.ok()) {
         info!("{:?}", d.path());
-        let game_summary = get_game_summary(d.path());
-        info!("{:?}", game_summary);
+        let game_manifest = get_game_manifest(d.path());
+        info!("{:?}", game_manifest);
         games.0.push(Game {
             path: d.path().join("game.exe"),
-            title: game_summary.title,
-            description: game_summary.description,
-            author: game_summary.author,
+            title: game_manifest.title,
+            description: game_manifest.description,
+            author: game_manifest.author,
             screenshot: asset_server.load(
                 d.path()
                     .iter()
@@ -70,10 +70,10 @@ fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
     }
 }
 
-fn get_game_summary<P: AsRef<Path>>(path: P) -> GameSummary {
-    let summary_file = path.as_ref().join("launcher_summary.toml");
-    let summary_file_content = fs::read_to_string(summary_file).unwrap();
-    toml::from_str::<GameSummary>(&summary_file_content).unwrap()
+fn get_game_manifest<P: AsRef<Path>>(path: P) -> GameManifest {
+    let manifest_file = path.as_ref().join("launcher_manifest.toml");
+    let manifest_file_content = fs::read_to_string(manifest_file).unwrap();
+    toml::from_str::<GameManifest>(&manifest_file_content).unwrap()
 }
 
 fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
