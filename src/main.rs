@@ -20,6 +20,7 @@ struct GameManifest {
     title: String,
     description: String,
     author: String,
+    game_exe_name : String
 }
 
 struct Games(Vec<Game>);
@@ -55,7 +56,7 @@ fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
         let game_manifest = get_game_manifest(d.path());
         info!("{:?}", game_manifest);
         games.0.push(Game {
-            path: d.path().join("game.exe"),
+            path: d.path().join(game_manifest.game_exe_name),
             title: game_manifest.title,
             description: game_manifest.description,
             author: game_manifest.author,
