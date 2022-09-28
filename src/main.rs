@@ -28,6 +28,9 @@ struct SelectedIndex(u32);
 #[derive(Component)]
 struct GameIndex(u32);
 
+#[derive(Component)]
+struct GameTitleText;
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
@@ -46,6 +49,7 @@ fn main() {
         .add_system(select_by_cursor)
         .add_system(run_by_keybord_sys)
         .add_system(play_button_sys)
+        .add_system(update_title_text)
         .run();
 }
 
@@ -191,6 +195,29 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
         });
     })
     .with_children(|p| {
+        //title
+        p.spawn_bundle(
+            TextBundle::from_section(
+                games.0[0].title.clone(),
+                TextStyle {
+                    font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                    font_size: 100.,
+                    color: Color::WHITE,
+                },
+            )
+            .with_style(Style {
+                align_self: AlignSelf::FlexEnd,
+                margin: UiRect {
+                    left: Val::Px(20.),
+                    top: Val::Px(20.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            }),
+        )
+        .insert(GameTitleText);
+    })
+    .with_children(|p| {
         //play button
         p.spawn_bundle(ButtonBundle {
             style: Style {
@@ -289,4 +316,20 @@ fn play_button_sys(
             run_game(&selected_idx, &games);
         }
     }
+}
+
+fn update_title_text(
+    mut title_text: Query<(&mut Text,), With<GameTitleText>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+    asset_server: Res<AssetServer>,
+) {
+    title_text.single_mut().0.sections = vec![TextSection {
+        value: games.0[selected_idx.0 as usize].title.clone(),
+        style: TextStyle {
+            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+            font_size: 100.,
+            color: Color::WHITE,
+        },
+    }]
 }
