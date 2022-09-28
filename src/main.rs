@@ -31,6 +31,9 @@ struct GameIndex(u32);
 #[derive(Component)]
 struct GameTitleText;
 
+#[derive(Component)]
+struct GameDescriptionText;
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
@@ -50,6 +53,7 @@ fn main() {
         .add_system(run_by_keybord_sys)
         .add_system(play_button_sys)
         .add_system(update_title_text)
+        .add_system(update_desc_text)
         .run();
 }
 
@@ -195,27 +199,63 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
         });
     })
     .with_children(|p| {
-        //title
-        p.spawn_bundle(
-            TextBundle::from_section(
-                games.0[0].title.clone(),
-                TextStyle {
-                    font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                    font_size: 100.,
-                    color: Color::WHITE,
-                },
-            )
-            .with_style(Style {
-                align_self: AlignSelf::FlexEnd,
-                margin: UiRect {
-                    left: Val::Px(20.),
-                    top: Val::Px(20.),
-                    ..Default::default()
-                },
+        //game detail root node
+        p.spawn_bundle(NodeBundle {
+            style: Style {
+                size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                flex_direction: FlexDirection::ColumnReverse,
+                align_self: AlignSelf::FlexStart,
                 ..Default::default()
-            }),
-        )
-        .insert(GameTitleText);
+            },
+            color: Color::NONE.into(),
+            ..Default::default()
+        })
+        .with_children(|p| {
+            //title
+            p.spawn_bundle(
+                TextBundle::from_section(
+                    games.0[0].title.clone(),
+                    TextStyle {
+                        font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                        font_size: 100.,
+                        color: Color::WHITE,
+                    },
+                )
+                .with_style(Style {
+                    align_self: AlignSelf::FlexStart,
+                    margin: UiRect {
+                        left: Val::Px(20.),
+                        top: Val::Px(20.),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                }),
+            )
+            .insert(GameTitleText);
+        })
+        .with_children(|p| {
+            //description
+            p.spawn_bundle(
+                TextBundle::from_section(
+                    games.0[0].description.clone(),
+                    TextStyle {
+                        font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                        font_size: 50.,
+                        color: Color::WHITE,
+                    },
+                )
+                .with_style(Style {
+                    align_self: AlignSelf::FlexStart,
+                    margin: UiRect {
+                        left: Val::Px(20.),
+                        top: Val::Px(20.),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                }),
+            )
+            .insert(GameDescriptionText);
+        });
     })
     .with_children(|p| {
         //play button
@@ -329,6 +369,22 @@ fn update_title_text(
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             font_size: 100.,
+            color: Color::WHITE,
+        },
+    }]
+}
+
+fn update_desc_text(
+    mut desc_text: Query<(&mut Text,), With<GameDescriptionText>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+    asset_server: Res<AssetServer>,
+) {
+    desc_text.single_mut().0.sections = vec![TextSection {
+        value: games.0[selected_idx.0 as usize].description.clone(),
+        style: TextStyle {
+            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+            font_size: 50.,
             color: Color::WHITE,
         },
     }]
