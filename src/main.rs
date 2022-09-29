@@ -20,7 +20,7 @@ struct GameManifest {
     title: String,
     description: String,
     author: String,
-    game_exe_name : String
+    game_exe_name: String,
 }
 
 struct Games(Vec<Game>);
@@ -92,6 +92,7 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
         NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 justify_content: JustifyContent::FlexStart,
                 ..Default::default()
             },
@@ -106,6 +107,7 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
                 flex_direction: FlexDirection::ColumnReverse,
                 justify_content: JustifyContent::FlexStart,
                 size: Size::new(Val::Px(320.), Val::Percent(100.)),
+                min_size: Size::new(Val::Px(320.), Val::Percent(100.)),
                 ..Default::default()
             },
             color: Color::rgb(0.28, 0.38, 0.57).into(),
@@ -204,6 +206,7 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
         p.spawn_bundle(NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 flex_direction: FlexDirection::ColumnReverse,
                 align_self: AlignSelf::FlexStart,
                 ..Default::default()
@@ -235,27 +238,47 @@ fn ui_setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>
             .insert(GameTitleText);
         })
         .with_children(|p| {
-            //description
             p.spawn_bundle(
-                TextBundle::from_section(
-                    games.0[0].description.clone(),
-                    TextStyle {
-                        font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                        font_size: 50.,
-                        color: Color::WHITE,
-                    },
-                )
-                .with_style(Style {
-                    align_self: AlignSelf::FlexStart,
-                    margin: UiRect {
-                        left: Val::Px(20.),
-                        top: Val::Px(20.),
+                //desc sroot node
+                NodeBundle {
+                    style: Style {
+                        size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                        max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                        flex_direction: FlexDirection::ColumnReverse,
+                        justify_content: JustifyContent::FlexStart,
                         ..Default::default()
                     },
+                    color: Color::NONE.into(),
                     ..Default::default()
-                }),
+                },
             )
-            .insert(GameDescriptionText);
+            .with_children(|p| {
+                //desc text
+                p.spawn_bundle(
+                    TextBundle::from_section(
+                        games.0[0].description.clone(),
+                        TextStyle {
+                            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                            font_size: 50.,
+                            color: Color::WHITE,
+                        },
+                    )
+                    .with_text_alignment(TextAlignment::CENTER_LEFT)
+                    .with_style(Style {
+                        align_self: AlignSelf::FlexStart,
+                        margin: UiRect {
+                            left: Val::Px(20.),
+                            top: Val::Px(20.),
+                            right: Val::Px(20.),
+                            ..Default::default()
+                        },
+                        //flex_wrap: FlexWrap::Wrap,
+                        max_size: Size::new(Val::Px(700.), Val::Auto),
+                        ..Default::default()
+                    }),
+                )
+                .insert(GameDescriptionText);
+            });
         });
     })
     .with_children(|p| {
