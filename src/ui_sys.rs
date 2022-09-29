@@ -36,12 +36,12 @@ pub(crate) fn update_desc_text(
 }
 
 pub(crate) fn update_author_text(
-    mut desc_text: Query<(&mut Text,), With<GameAuthorText>>,
+    mut author_text: Query<(&mut Text,), With<GameAuthorText>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
     asset_server: Res<AssetServer>,
 ) {
-    desc_text.single_mut().0.sections = vec![TextSection {
+    author_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].author.clone(),
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
@@ -54,8 +54,7 @@ pub(crate) fn update_author_text(
 pub(crate) fn update_screenshot(
     mut image: Query<(&mut UiImage,), With<GameScreenShot>>,
     selected_idx: Res<SelectedIndex>,
-    games: Res<Games>,
-    asset_server: Res<AssetServer>,
+    games: Res<Games>
 ) {
     image.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
 }
