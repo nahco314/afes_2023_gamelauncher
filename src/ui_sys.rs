@@ -1,4 +1,6 @@
-use crate::{GameAuthorText, GameDescriptionText, GameTitleText, Games, SelectedIndex};
+use crate::{
+    GameAuthorText, GameDescriptionText, GameScreenShot, GameTitleText, Games, SelectedIndex,
+};
 use bevy::prelude::*;
 
 pub(crate) fn update_title_text(
@@ -47,6 +49,15 @@ pub(crate) fn update_author_text(
             color: crate::TEXT_COLOR,
         },
     }]
+}
+
+pub(crate) fn update_screenshot(
+    mut image: Query<(&mut UiImage,), With<GameScreenShot>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+    asset_server: Res<AssetServer>,
+) {
+    image.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
 }
 
 pub(crate) fn play_button_sys(

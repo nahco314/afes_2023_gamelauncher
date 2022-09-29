@@ -50,6 +50,9 @@ struct GameDescriptionText;
 #[derive(Component)]
 struct GameAuthorText;
 
+#[derive(Component)]
+struct GameScreenShot;
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
@@ -79,6 +82,7 @@ fn main() {
         .add_system(ui_sys::update_title_text)
         .add_system(ui_sys::update_desc_text)
         .add_system(ui_sys::update_author_text)
+        .add_system(ui_sys::update_screenshot)
         .run();
 }
 

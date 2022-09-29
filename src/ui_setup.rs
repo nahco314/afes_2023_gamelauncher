@@ -1,5 +1,8 @@
-use crate::{GameAuthorText, GameDescriptionText, GameIndex, GameTitleText, Games};
-use bevy::{prelude::*, ui::FocusPolicy};
+use crate::{GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games};
+use bevy::{
+    prelude::*,
+    ui::{widget::ImageMode, FocusPolicy},
+};
 
 pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
     cmd.spawn_bundle(Camera2dBundle::default());
@@ -131,6 +134,21 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             ..Default::default()
         })
         .with_children(|p| {
+            //screenshot
+            p.spawn_bundle(ImageBundle {
+                style: Style {
+                    size: Size::new(Val::Auto, Val::Percent(100.)),
+
+                    position_type: PositionType::Absolute,
+                    ..Default::default()
+                },
+                image_mode: ImageMode::KeepAspect,
+                image: games.0[0].screenshot.clone().into(),
+                ..Default::default()
+            })
+            .insert(GameScreenShot);
+        })
+        .with_children(|p| {
             //title
             p.spawn_bundle(
                 TextBundle::from_section(
@@ -147,7 +165,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     margin: UiRect {
                         left: Val::Px(20.),
                         top: Val::Px(20.),
-                        bottom : Val::Px(20.),
+                        bottom: Val::Px(20.),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -191,7 +209,8 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                         },
                         max_size: Size::new(Val::Px(crate::GAME_DESC_TEXT_WIDTH), Val::Auto),
                         ..Default::default()
-                    }).with_text_alignment(TextAlignment::TOP_LEFT),
+                    })
+                    .with_text_alignment(TextAlignment::TOP_LEFT),
                 )
                 .insert(GameDescriptionText);
             })
