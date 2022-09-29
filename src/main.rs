@@ -9,11 +9,13 @@ use std::{
     process::Command,
 };
 
-const SELECTED_GAME_COLOR: Color = Color::rgb(0.44, 0.63, 0.7);
-const NORMAL_GAME_COLOR: Color = Color::rgb(0.54, 0.73, 0.8);
-const GAMES_LAVEL_COLOR: Color = Color::rgb(0.28, 0.38, 0.57);
+const SELECTED_GAME_TITLE_COLOR: Color = Color::rgb(0.53, 0.65, 0.73);
+const NORMAL_GAME_TITLE_COLOR: Color = Color::rgb(0.20, 0.24, 0.26);
+const GAME_TITLE_COLOR_HOVER: Color = Color::rgb(0.2, 0.41, 0.52);
+const GAMES_LAVEL_COLOR: Color = Color::rgb(0.20, 0.4, 0.40);
 const TEXT_COLOR: Color = Color::rgb(0.95, 0.95, 0.95);
-const BUTTON_COLOR: Color = Color::LIME_GREEN;
+const BUTTON_COLOR: Color = Color::rgb(0.12, 0.76, 0.12);
+const BUTTON_HOVER: Color = Color::rgb(0.25, 0.82, 0.25);
 const GAMES_LAVEL_WIDTH: f32 = 360.;
 const GAME_DESC_TEXT_WIDTH: f32 = 900.;
 const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
@@ -74,7 +76,6 @@ fn main() {
         .insert_resource(SelectedIndex(0))
         .add_startup_system(load_game_folder)
         .add_startup_system(ui_setup::setup.after(load_game_folder))
-        .add_system(ui_selected_color_system)
         .add_system(select_by_keybord)
         .add_system(select_by_cursor)
         .add_system(run_by_keybord_sys)
@@ -83,6 +84,7 @@ fn main() {
         .add_system(ui_sys::update_desc_text)
         .add_system(ui_sys::update_author_text)
         .add_system(ui_sys::update_screenshot)
+        .add_system(ui_sys::game_titles_ui_sys)
         .run();
 }
 
@@ -111,19 +113,6 @@ fn get_game_manifest<P: AsRef<Path>>(path: P) -> GameManifest {
     let manifest_file = path.as_ref().join("launcher_manifest.toml");
     let manifest_file_content = fs::read_to_string(manifest_file).unwrap();
     toml::from_str::<GameManifest>(&manifest_file_content).unwrap()
-}
-
-fn ui_selected_color_system(
-    selected_idx: Res<SelectedIndex>,
-    mut ui_games: Query<(&mut UiColor, &GameIndex)>,
-) {
-    for (mut color, idx) in ui_games.iter_mut() {
-        *color = if idx.0 == selected_idx.0 {
-            SELECTED_GAME_COLOR.into()
-        } else {
-            NORMAL_GAME_COLOR.into()
-        }
-    }
 }
 
 fn select_by_keybord(

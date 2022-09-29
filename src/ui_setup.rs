@@ -84,7 +84,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                                 size: Size::new(Val::Percent(100.), Val::Px(25.0)),
                                 ..default()
                             },
-                            color: crate::NORMAL_GAME_COLOR.into(),
+                            color: crate::NORMAL_GAME_TITLE_COLOR.into(),
                             ..default()
                         })
                         .with_children(|p| {

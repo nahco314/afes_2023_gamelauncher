@@ -1,5 +1,6 @@
 use crate::{
-    GameAuthorText, GameDescriptionText, GameScreenShot, GameTitleText, Games, SelectedIndex,
+    GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games,
+    SelectedIndex,
 };
 use bevy::prelude::*;
 
@@ -54,19 +55,40 @@ pub(crate) fn update_author_text(
 pub(crate) fn update_screenshot(
     mut image: Query<(&mut UiImage,), With<GameScreenShot>>,
     selected_idx: Res<SelectedIndex>,
-    games: Res<Games>
+    games: Res<Games>,
 ) {
     image.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
 }
 
 pub(crate) fn play_button_sys(
-    q: Query<(&Interaction,), (Changed<Interaction>, With<Button>)>,
+    mut q: Query<(&Interaction, &mut UiColor), (Changed<Interaction>, With<Button>)>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
-    if let Ok(q) = q.get_single() {
-        if *q.0 == Interaction::Clicked {
-            crate::run_game(&selected_idx, &games);
+    if let Ok((itr, mut col)) = q.get_single_mut() {
+        if *itr == Interaction::Hovered {
+            *col = crate::BUTTON_HOVER.into();
+        } else {
+            *col = crate::BUTTON_COLOR.into();
+            if *itr == Interaction::Clicked {
+                crate::run_game(&selected_idx, &games);
+            }
         }
+    }
+}
+
+pub(crate) fn game_titles_ui_sys(
+    mut q: Query<(&Interaction, &mut UiColor, &GameIndex), With<GameIndex>>,
+    selected_idx: Res<SelectedIndex>,
+) {
+    for (itr, mut col, idx) in q.iter_mut() {
+        *col = if selected_idx.0 == idx.0 {
+            crate::SELECTED_GAME_TITLE_COLOR
+        } else if *itr == Interaction::Hovered {
+            crate::GAME_TITLE_COLOR_HOVER
+        } else {
+            crate::NORMAL_GAME_TITLE_COLOR
+        }
+        .into()
     }
 }
