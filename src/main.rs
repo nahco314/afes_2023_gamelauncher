@@ -1,7 +1,7 @@
 mod ui_setup;
 mod ui_sys;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResizeConstraints};
 use serde::Deserialize;
 use std::{
     env, fs,
@@ -14,6 +14,8 @@ const NORMAL_GAME_COLOR: Color = Color::rgb(0.54, 0.73, 0.8);
 const GAMES_LAVEL_COLOR: Color = Color::rgb(0.28, 0.38, 0.57);
 const TEXT_COLOR: Color = Color::rgb(0.95, 0.95, 0.95);
 const BUTTON_COLOR: Color = Color::LIME_GREEN;
+const GAMES_LAVEL_WIDTH: f32 = 360.;
+const GAME_DESC_TEXT_WIDTH: f32 = 900.;
 
 struct Game {
     path: PathBuf,
@@ -50,6 +52,14 @@ fn main() {
             width: 1600.,
             height: 900.,
             resizable: true,
+            title: "Afes 2022 Game Launcher".to_owned(),
+            resize_constraints: WindowResizeConstraints {
+                min_width: 1280.,
+                min_height: 680.,
+                max_height: f32::INFINITY,
+                max_width: f32::INFINITY,
+            },
+            scale_factor_override: Some(1.0),
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)

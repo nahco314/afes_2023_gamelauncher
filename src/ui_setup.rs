@@ -22,8 +22,8 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             style: Style {
                 flex_direction: FlexDirection::ColumnReverse,
                 justify_content: JustifyContent::FlexStart,
-                size: Size::new(Val::Px(320.), Val::Percent(100.)),
-                min_size: Size::new(Val::Px(320.), Val::Percent(100.)),
+                size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
+                min_size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
                 ..Default::default()
             },
             color: crate::GAMES_LAVEL_COLOR.into(),
@@ -137,7 +137,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     games.0[0].title.clone(),
                     TextStyle {
                         font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                        font_size: 100.,
+                        font_size: 90.,
                         color: crate::TEXT_COLOR,
                     },
                 )
@@ -188,8 +188,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                             right: Val::Px(20.),
                             ..Default::default()
                         },
-                        //flex_wrap: FlexWrap::Wrap,
-                        max_size: Size::new(Val::Px(700.), Val::Auto),
+                        max_size: Size::new(Val::Px(crate::GAME_DESC_TEXT_WIDTH), Val::Auto),
                         ..Default::default()
                     }),
                 )
