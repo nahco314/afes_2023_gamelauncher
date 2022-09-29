@@ -1,4 +1,4 @@
-use crate::{GameDescriptionText, GameTitleText, Games, SelectedIndex};
+use crate::{GameAuthorText, GameDescriptionText, GameTitleText, Games, SelectedIndex};
 use bevy::prelude::*;
 
 pub(crate) fn update_title_text(
@@ -28,6 +28,22 @@ pub(crate) fn update_desc_text(
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             font_size: 50.,
+            color: crate::TEXT_COLOR,
+        },
+    }]
+}
+
+pub(crate) fn update_author_text(
+    mut desc_text: Query<(&mut Text,), With<GameAuthorText>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+    asset_server: Res<AssetServer>,
+) {
+    desc_text.single_mut().0.sections = vec![TextSection {
+        value: games.0[selected_idx.0 as usize].author.clone(),
+        style: TextStyle {
+            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+            font_size: 40.,
             color: crate::TEXT_COLOR,
         },
     }]

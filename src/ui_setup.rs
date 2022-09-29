@@ -1,4 +1,4 @@
-use crate::{GameDescriptionText, GameIndex, GameTitleText, Games};
+use crate::{GameAuthorText, GameDescriptionText, GameIndex, GameTitleText, Games};
 use bevy::{prelude::*, ui::FocusPolicy};
 
 pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
@@ -193,6 +193,48 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     }),
                 )
                 .insert(GameDescriptionText);
+            })
+            .with_children(|p| {
+                p.spawn_bundle(
+                    //author root node
+                    NodeBundle {
+                        style: Style {
+                            size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                            max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                            flex_direction: FlexDirection::Column,
+                            justify_content: JustifyContent::FlexStart,
+                            ..Default::default()
+                        },
+                        color: Color::NONE.into(),
+                        ..Default::default()
+                    },
+                )
+                .with_children(|p| {
+                    //author text
+                    p.spawn_bundle(
+                        TextBundle::from_section(
+                            games.0[0].author.clone(),
+                            TextStyle {
+                                font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
+                                font_size: 40.,
+                                color: crate::TEXT_COLOR,
+                            },
+                        )
+                        .with_text_alignment(TextAlignment::CENTER_LEFT)
+                        .with_style(Style {
+                            align_self: AlignSelf::FlexStart,
+                            margin: UiRect {
+                                left: Val::Px(20.),
+                                top: Val::Px(20.),
+                                right: Val::Px(20.),
+                                bottom: Val::Px(30.),
+                            },
+                            max_size: Size::new(Val::Px(crate::GAME_AUTHOR_TEXT_WIDTH), Val::Auto),
+                            ..Default::default()
+                        }),
+                    )
+                    .insert(GameAuthorText);
+                });
             });
         });
     })

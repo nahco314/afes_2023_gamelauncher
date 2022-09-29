@@ -16,6 +16,7 @@ const TEXT_COLOR: Color = Color::rgb(0.95, 0.95, 0.95);
 const BUTTON_COLOR: Color = Color::LIME_GREEN;
 const GAMES_LAVEL_WIDTH: f32 = 360.;
 const GAME_DESC_TEXT_WIDTH: f32 = 900.;
+const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
 
 struct Game {
     path: PathBuf,
@@ -46,6 +47,9 @@ struct GameTitleText;
 #[derive(Component)]
 struct GameDescriptionText;
 
+#[derive(Component)]
+struct GameAuthorText;
+
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
@@ -74,6 +78,7 @@ fn main() {
         .add_system(ui_sys::play_button_sys)
         .add_system(ui_sys::update_title_text)
         .add_system(ui_sys::update_desc_text)
+        .add_system(ui_sys::update_author_text)
         .run();
 }
 
