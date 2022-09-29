@@ -142,10 +142,12 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     },
                 )
                 .with_style(Style {
+                    min_size: Size::new(Val::Undefined, Val::Px(90.)),
                     align_self: AlignSelf::FlexStart,
                     margin: UiRect {
                         left: Val::Px(20.),
                         top: Val::Px(20.),
+                        bottom : Val::Px(20.),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -179,18 +181,17 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                             color: crate::TEXT_COLOR,
                         },
                     )
-                    .with_text_alignment(TextAlignment::CENTER_LEFT)
                     .with_style(Style {
                         align_self: AlignSelf::FlexStart,
                         margin: UiRect {
                             left: Val::Px(20.),
-                            top: Val::Px(20.),
+                            top: Val::Px(70.),
                             right: Val::Px(20.),
                             ..Default::default()
                         },
                         max_size: Size::new(Val::Px(crate::GAME_DESC_TEXT_WIDTH), Val::Auto),
                         ..Default::default()
-                    }),
+                    }).with_text_alignment(TextAlignment::TOP_LEFT),
                 )
                 .insert(GameDescriptionText);
             })
