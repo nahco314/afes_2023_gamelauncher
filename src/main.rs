@@ -1,7 +1,9 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 mod ui_setup;
 mod ui_sys;
 
-use bevy::{prelude::*, window::WindowResizeConstraints};
+use bevy::{prelude::*, window::WindowResizeConstraints, winit::WinitSettings};
 use serde::Deserialize;
 use std::{
     env, fs,
@@ -71,6 +73,7 @@ fn main() {
             scale_factor_override: Some(1.0),
             ..Default::default()
         })
+        .insert_resource(WinitSettings::desktop_app())
         .add_plugins(DefaultPlugins)
         .insert_resource(Games(Vec::new()))
         .insert_resource(SelectedIndex(0))
