@@ -92,6 +92,7 @@ fn main() {
         .add_system(ui_sys::update_author_text)
         .add_system(ui_sys::update_screenshot)
         .add_system(ui_sys::game_titles_ui_sys)
+        .add_system(ui_sys::fit_screenshot)
         .run();
 }
 

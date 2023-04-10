@@ -91,3 +91,30 @@ pub(crate) fn game_titles_ui_sys(
         }
     }
 }
+
+pub(crate) fn fit_screenshot(
+    mut q: Query<(&mut Style,), With<GameScreenShot>>,
+    window: Res<Windows>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+    assets: Res<Assets<Image>>,
+) {
+    let Ok((mut style,)) = q.get_single_mut() else { return; };
+    let window = window.get_primary().unwrap();
+    let screenshothandle = games.0[selected_idx.0 as usize].screenshot.clone();
+    info!("ssh:{:?}", screenshothandle);
+    let Some(screenshot) = assets.get(&screenshothandle) else { return; };
+    //aspect ratio = x / y
+    let screenshot_ratio = {
+        let size = screenshot.size();
+        size.x / size.y
+    };
+
+    let window_ratio = { (window.width() - crate::GAMES_LAVEL_WIDTH) / window.height() };
+
+    style.size = if window_ratio > screenshot_ratio {
+        Size::new(Val::Percent(100.), Val::Auto)
+    } else {
+        Size::new(Val::Auto, Val::Percent(100.))
+    };
+}
