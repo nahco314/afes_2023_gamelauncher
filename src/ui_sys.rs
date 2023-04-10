@@ -61,7 +61,7 @@ pub(crate) fn update_screenshot(
 }
 
 pub(crate) fn play_button_sys(
-    mut q: Query<(&Interaction, &mut UiColor), (Changed<Interaction>, With<Button>)>,
+    mut q: Query<(&Interaction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
@@ -78,7 +78,7 @@ pub(crate) fn play_button_sys(
 }
 
 pub(crate) fn game_titles_ui_sys(
-    mut q: Query<(&Interaction, &mut UiColor, &GameIndex), With<GameIndex>>,
+    mut q: Query<(&Interaction, &mut BackgroundColor, &GameIndex), With<GameIndex>>,
     selected_idx: Res<SelectedIndex>,
 ) {
     for (itr, mut col, idx) in q.iter_mut() {

@@ -11,13 +11,13 @@ use std::{
     process::Command,
 };
 
-const SELECTED_GAME_TITLE_COLOR: Color = Color::rgb(0.53, 0.65, 0.73);
-const NORMAL_GAME_TITLE_COLOR: Color = Color::rgb(0.20, 0.24, 0.26);
-const GAME_TITLE_COLOR_HOVER: Color = Color::rgb(0.2, 0.41, 0.52);
-const GAMES_LAVEL_COLOR: Color = Color::rgb(0.20, 0.4, 0.40);
+const SELECTED_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.53, 0.65, 0.73));
+const NORMAL_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.24, 0.26));
+const GAME_TITLE_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.2, 0.41, 0.52));
+const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.4, 0.40));
 const TEXT_COLOR: Color = Color::rgb(0.95, 0.95, 0.95);
-const BUTTON_COLOR: Color = Color::rgb(0.12, 0.76, 0.12);
-const BUTTON_HOVER: Color = Color::rgb(0.25, 0.82, 0.25);
+const BUTTON_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.76, 0.12));
+const BUTTON_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
 const GAMES_LAVEL_WIDTH: f32 = 360.;
 const GAME_DESC_TEXT_WIDTH: f32 = 900.;
 const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
@@ -39,7 +39,9 @@ struct GameManifest {
     game_exe_name: String,
 }
 
+#[derive(Resource)]
 struct Games(Vec<Game>);
+#[derive(Resource)]
 struct SelectedIndex(u32);
 
 #[derive(Component)]
@@ -59,22 +61,24 @@ struct GameScreenShot;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            width: 1600.,
-            height: 900.,
-            resizable: true,
-            title: "Afes 2022 Game Launcher".to_owned(),
-            resize_constraints: WindowResizeConstraints {
-                min_width: 1280.,
-                min_height: 680.,
-                max_height: f32::INFINITY,
-                max_width: f32::INFINITY,
-            },
-            scale_factor_override: Some(1.0),
-            ..Default::default()
-        })
         .insert_resource(WinitSettings::desktop_app())
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                width: 1600.,
+                height: 900.,
+                resizable: true,
+                title: "Afes 2022 Game Launcher".to_owned(),
+                resize_constraints: WindowResizeConstraints {
+                    min_width: 1280.,
+                    min_height: 680.,
+                    max_height: f32::INFINITY,
+                    max_width: f32::INFINITY,
+                },
+                scale_factor_override: Some(1.0),
+                ..Default::default()
+            },
+            ..Default::default()
+        }))
         .insert_resource(Games(Vec::new()))
         .insert_resource(SelectedIndex(0))
         .add_startup_system(load_game_folder)

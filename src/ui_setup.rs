@@ -15,7 +15,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 justify_content: JustifyContent::FlexStart,
                 ..Default::default()
             },
-            color: Color::NONE.into(),
+            background_color: BackgroundColor(Color::NONE),
             ..Default::default()
         },
     )
@@ -29,7 +29,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 min_size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
                 ..Default::default()
             },
-            color: crate::GAMES_LAVEL_COLOR.into(),
+            background_color: crate::GAMES_LAVEL_COLOR,
             ..Default::default()
         })
         .with_children(|p| {
@@ -61,7 +61,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     size: Size::new(Val::Percent(100.), Val::Auto),
                     ..Default::default()
                 },
-                color: Color::NONE.into(),
+                background_color: BackgroundColor(Color::NONE),
                 ..Default::default()
             })
             .with_children(|p| {
@@ -73,7 +73,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                         max_size: Size::new(Val::Undefined, Val::Undefined),
                         ..Default::default()
                     },
-                    color: Color::NONE.into(),
+                    background_color: BackgroundColor(Color::NONE),
                     ..Default::default()
                 })
                 .with_children(|p| {
@@ -84,7 +84,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                                 size: Size::new(Val::Percent(100.), Val::Px(25.0)),
                                 ..default()
                             },
-                            color: crate::NORMAL_GAME_TITLE_COLOR.into(),
+                            background_color: crate::NORMAL_GAME_TITLE_COLOR,
                             ..default()
                         })
                         .with_children(|p| {
@@ -130,7 +130,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 align_self: AlignSelf::FlexStart,
                 ..Default::default()
             },
-            color: Color::NONE.into(),
+            background_color: BackgroundColor(Color::NONE),
             ..Default::default()
         })
         .with_children(|p| {
@@ -184,7 +184,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                         justify_content: JustifyContent::FlexStart,
                         ..Default::default()
                     },
-                    color: Color::NONE.into(),
+                    background_color: BackgroundColor(Color::NONE),
                     ..Default::default()
                 },
             )
@@ -225,7 +225,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                             justify_content: JustifyContent::FlexStart,
                             ..Default::default()
                         },
-                        color: Color::NONE.into(),
+                        background_color: BackgroundColor(Color::NONE),
                         ..Default::default()
                     },
                 )
@@ -273,7 +273,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 },
                 ..Default::default()
             },
-            color: crate::BUTTON_COLOR.into(),
+            background_color: crate::BUTTON_COLOR,
             ..Default::default()
         })
         .with_children(|p| {
