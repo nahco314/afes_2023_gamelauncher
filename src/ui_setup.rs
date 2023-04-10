@@ -5,8 +5,8 @@ use bevy::{
 };
 
 pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
-    cmd.spawn_bundle(Camera2dBundle::default());
-    cmd.spawn_bundle(
+    cmd.spawn(Camera2dBundle::default());
+    cmd.spawn(
         //root node
         NodeBundle {
             style: Style {
@@ -21,7 +21,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
     )
     .with_children(|p| {
         //games label
-        p.spawn_bundle(NodeBundle {
+        p.spawn(NodeBundle {
             style: Style {
                 flex_direction: FlexDirection::ColumnReverse,
                 justify_content: JustifyContent::FlexStart,
@@ -34,7 +34,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
         })
         .with_children(|p| {
             //label title
-            p.spawn_bundle(
+            p.spawn(
                 TextBundle::from_section(
                     "Games",
                     TextStyle {
@@ -54,7 +54,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 }),
             );
             //game *cards* node
-            p.spawn_bundle(NodeBundle {
+            p.spawn(NodeBundle {
                 style: Style {
                     flex_direction: FlexDirection::ColumnReverse,
                     align_self: AlignSelf::Center,
@@ -66,7 +66,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             })
             .with_children(|p| {
                 //game card node
-                p.spawn_bundle(NodeBundle {
+                p.spawn(NodeBundle {
                     style: Style {
                         flex_direction: FlexDirection::ColumnReverse,
                         flex_grow: 1.0,
@@ -79,7 +79,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 .with_children(|p| {
                     for (idx, game) in games.0.iter().enumerate() {
                         //game card node
-                        p.spawn_bundle(NodeBundle {
+                        p.spawn(NodeBundle {
                             style: Style {
                                 size: Size::new(Val::Percent(100.), Val::Px(25.0)),
                                 ..default()
@@ -89,7 +89,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                         })
                         .with_children(|p| {
                             //game title
-                            p.spawn_bundle({
+                            p.spawn({
                                 let mut tmp = TextBundle::from_section(
                                     game.title.to_owned(),
                                     TextStyle {
@@ -122,7 +122,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
     })
     .with_children(|p| {
         //game detail root node
-        p.spawn_bundle(NodeBundle {
+        p.spawn(NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
@@ -135,7 +135,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
         })
         .with_children(|p| {
             //screenshot
-            p.spawn_bundle(ImageBundle {
+            p.spawn(ImageBundle {
                 style: Style {
                     size: Size::new(Val::Auto, Val::Percent(100.)),
 
@@ -150,7 +150,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
         })
         .with_children(|p| {
             //title
-            p.spawn_bundle(
+            p.spawn(
                 TextBundle::from_section(
                     games.0[0].title.clone(),
                     TextStyle {
@@ -174,7 +174,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             .insert(GameTitleText);
         })
         .with_children(|p| {
-            p.spawn_bundle(
+            p.spawn(
                 //desc sroot node
                 NodeBundle {
                     style: Style {
@@ -190,7 +190,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             )
             .with_children(|p| {
                 //desc text
-                p.spawn_bundle(
+                p.spawn(
                     TextBundle::from_section(
                         games.0[0].description.clone(),
                         TextStyle {
@@ -215,7 +215,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 .insert(GameDescriptionText);
             })
             .with_children(|p| {
-                p.spawn_bundle(
+                p.spawn(
                     //author root node
                     NodeBundle {
                         style: Style {
@@ -231,7 +231,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 )
                 .with_children(|p| {
                     //author text
-                    p.spawn_bundle(
+                    p.spawn(
                         TextBundle::from_section(
                             games.0[0].author.clone(),
                             TextStyle {
@@ -260,7 +260,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
     })
     .with_children(|p| {
         //play button
-        p.spawn_bundle(ButtonBundle {
+        p.spawn(ButtonBundle {
             style: Style {
                 size: Size::new(Val::Px(200.), Val::Px(60.)),
                 align_items: AlignItems::Center,
@@ -278,7 +278,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
         })
         .with_children(|p| {
             // "プレイ" text
-            p.spawn_bundle(TextBundle::from_section(
+            p.spawn(TextBundle::from_section(
                 "プレイ",
                 TextStyle {
                     font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
