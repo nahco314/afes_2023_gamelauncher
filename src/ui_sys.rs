@@ -67,9 +67,9 @@ pub(crate) fn play_button_sys(
 ) {
     if let Ok((itr, mut col)) = q.get_single_mut() {
         if *itr == Interaction::Hovered {
-            *col = crate::BUTTON_HOVER.into();
+            *col = crate::BUTTON_HOVER;
         } else {
-            *col = crate::BUTTON_COLOR.into();
+            *col = crate::BUTTON_COLOR;
             if *itr == Interaction::Clicked {
                 crate::run_game(&selected_idx, &games);
             }
@@ -89,6 +89,5 @@ pub(crate) fn game_titles_ui_sys(
         } else {
             crate::NORMAL_GAME_TITLE_COLOR
         }
-        .into()
     }
 }

@@ -23,7 +23,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
         //games label
         p.spawn(NodeBundle {
             style: Style {
-                flex_direction: FlexDirection::ColumnReverse,
+                flex_direction: FlexDirection::Column,
                 justify_content: JustifyContent::FlexStart,
                 size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
                 min_size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
@@ -56,7 +56,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             //game *cards* node
             p.spawn(NodeBundle {
                 style: Style {
-                    flex_direction: FlexDirection::ColumnReverse,
+                    flex_direction: FlexDirection::Column,
                     align_self: AlignSelf::Center,
                     size: Size::new(Val::Percent(100.), Val::Auto),
                     ..Default::default()
@@ -68,7 +68,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 //game card node
                 p.spawn(NodeBundle {
                     style: Style {
-                        flex_direction: FlexDirection::ColumnReverse,
+                        flex_direction: FlexDirection::Column,
                         flex_grow: 1.0,
                         max_size: Size::new(Val::Undefined, Val::Undefined),
                         ..Default::default()
@@ -126,7 +126,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-                flex_direction: FlexDirection::ColumnReverse,
+                flex_direction: FlexDirection::Column,
                 align_self: AlignSelf::FlexStart,
                 ..Default::default()
             },
@@ -138,7 +138,6 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
             p.spawn(ImageBundle {
                 style: Style {
                     size: Size::new(Val::Auto, Val::Percent(100.)),
-
                     position_type: PositionType::Absolute,
                     ..Default::default()
                 },
@@ -180,7 +179,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                     style: Style {
                         size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                         max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-                        flex_direction: FlexDirection::ColumnReverse,
+                        flex_direction: FlexDirection::Column,
                         justify_content: JustifyContent::FlexStart,
                         ..Default::default()
                     },
@@ -222,7 +221,7 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                             size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                             max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                             flex_direction: FlexDirection::Column,
-                            justify_content: JustifyContent::FlexStart,
+                            justify_content: JustifyContent::FlexEnd,
                             ..Default::default()
                         },
                         background_color: BackgroundColor(Color::NONE),
