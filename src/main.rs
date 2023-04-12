@@ -22,7 +22,7 @@ const GAMES_LAVEL_WIDTH: f32 = 360.;
 const GAME_DESC_TEXT_WIDTH: f32 = 900.;
 const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
 
-struct Game {
+pub struct Game {
     path: PathBuf,
     title: String,
     description: String,
@@ -40,7 +40,7 @@ struct GameManifest {
 }
 
 #[derive(Resource)]
-struct Games(Vec<Game>);
+pub struct Games(Vec<Game>);
 #[derive(Resource)]
 struct SelectedIndex(u32);
 
