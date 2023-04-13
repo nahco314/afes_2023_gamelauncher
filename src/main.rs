@@ -15,9 +15,15 @@ const SELECTED_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.
 const NORMAL_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.24, 0.26));
 const GAME_TITLE_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.2, 0.41, 0.52));
 const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.4, 0.40));
-const TEXT_COLOR: Color = Color::rgb(0.95, 0.95, 0.95);
+const TEXT_COLOR: Color = Color::rgb(1.0, 1.0, 1.0);
 const BUTTON_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.76, 0.12));
 const BUTTON_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
+const TEXT_BG_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.,
+    green: 0.,
+    blue: 0.,
+    alpha: 0.55,
+});
 const GAMES_LAVEL_WIDTH: f32 = 360.;
 const GAME_DESC_TEXT_WIDTH: f32 = 900.;
 const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
@@ -59,9 +65,12 @@ struct GameAuthorText;
 #[derive(Component)]
 struct GameScreenShot;
 
+#[derive(Component)]
+struct TextBg;
+
 fn main() {
     App::new()
-        .insert_resource(WinitSettings::desktop_app())
+        .insert_resource(WinitSettings::game())
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 width: 1600.,
@@ -93,6 +102,7 @@ fn main() {
         .add_system(ui_sys::update_screenshot)
         .add_system(ui_sys::game_titles_ui_sys)
         .add_system(ui_sys::fit_screenshot)
+        .add_system(ui_sys::update_text_bg)
         .run();
 }
 

@@ -1,5 +1,10 @@
-use crate::{GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games};
+use crate::{
+    GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games, TextBg,
+};
 use bevy::prelude::*;
+
+const TEXT_Z_INDEX: i32 = 2;
+const TEXT_BG_Z_INDEX: i32 = 1;
 
 pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
     cmd.spawn(Camera2dBundle::default());
@@ -33,12 +38,18 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                 })
                 .with_children(|p| {
                     p.spawn(game_detail::title(&games, &asset_server))
+                        .with_children(|p| {
+                            p.spawn(text_bg()).insert(TextBg);
+                        })
                         .insert(GameTitleText);
                 })
                 .with_children(|p| {
                     p.spawn(game_detail::additional::root())
                         .with_children(|p| {
                             p.spawn(game_detail::additional::description(&games, &asset_server))
+                                .with_children(|p| {
+                                    p.spawn(text_bg()).insert(TextBg);
+                                })
                                 .insert(GameDescriptionText);
                         })
                         .with_children(|p| {
@@ -48,6 +59,9 @@ pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Re
                                         &games,
                                         &asset_server,
                                     ))
+                                    .with_children(|p| {
+                                        p.spawn(text_bg()).insert(TextBg);
+                                    })
                                     .insert(GameAuthorText);
                                 });
                         });
@@ -194,6 +208,8 @@ mod game_detail {
     use crate::Games;
     use bevy::{prelude::*, ui::widget::ImageMode};
 
+    use super::TEXT_Z_INDEX;
+
     pub fn root() -> NodeBundle {
         NodeBundle {
             style: Style {
@@ -222,7 +238,7 @@ mod game_detail {
     }
 
     pub fn title(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section(
+        let mut tmp = TextBundle::from_section(
             games.0[0].title.clone(),
             TextStyle {
                 font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
@@ -240,11 +256,13 @@ mod game_detail {
                 ..Default::default()
             },
             ..Default::default()
-        })
+        });
+        tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
+        tmp
     }
 
     pub mod additional {
-        use crate::Games;
+        use crate::{ui_setup::TEXT_Z_INDEX, Games};
         use bevy::prelude::*;
         pub fn root() -> NodeBundle {
             NodeBundle {
@@ -261,7 +279,7 @@ mod game_detail {
         }
 
         pub fn description(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
-            TextBundle::from_section(
+            let mut tmp = TextBundle::from_section(
                 games.0[0].description.clone(),
                 TextStyle {
                     font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
@@ -280,11 +298,13 @@ mod game_detail {
                 max_size: Size::new(Val::Px(crate::GAME_DESC_TEXT_WIDTH), Val::Auto),
                 ..Default::default()
             })
-            .with_text_alignment(TextAlignment::TOP_LEFT)
+            .with_text_alignment(TextAlignment::TOP_LEFT);
+            tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
+            tmp
         }
 
         pub mod author {
-            use crate::Games;
+            use crate::{ui_setup::TEXT_Z_INDEX, Games};
             use bevy::prelude::*;
             pub fn root() -> NodeBundle {
                 NodeBundle {
@@ -301,7 +321,7 @@ mod game_detail {
             }
 
             pub fn text(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
-                TextBundle::from_section(
+                let mut tmp = TextBundle::from_section(
                     games.0[0].author.clone(),
                     TextStyle {
                         font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
@@ -320,7 +340,9 @@ mod game_detail {
                     },
                     max_size: Size::new(Val::Px(crate::GAME_AUTHOR_TEXT_WIDTH), Val::Auto),
                     ..Default::default()
-                })
+                });
+                tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
+                tmp
             }
         }
     }
@@ -356,5 +378,17 @@ pub mod play_button {
                 color: crate::TEXT_COLOR,
             },
         )
+    }
+}
+
+fn text_bg() -> NodeBundle {
+    NodeBundle {
+        style: Style {
+            size: Size::new(Val::Px(0.), Val::Px(0.)),
+            ..Default::default()
+        },
+        background_color: crate::TEXT_BG_COLOR,
+        z_index: ZIndex::Global(TEXT_BG_Z_INDEX),
+        ..Default::default()
     }
 }

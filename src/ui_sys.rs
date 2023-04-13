@@ -1,6 +1,6 @@
 use crate::{
     GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games,
-    SelectedIndex,
+    SelectedIndex, TextBg,
 };
 use bevy::prelude::*;
 
@@ -102,7 +102,6 @@ pub(crate) fn fit_screenshot(
     let Ok((mut style,)) = q.get_single_mut() else { return; };
     let window = window.get_primary().unwrap();
     let screenshothandle = games.0[selected_idx.0 as usize].screenshot.clone();
-    info!("ssh:{:?}", screenshothandle);
     let Some(screenshot) = assets.get(&screenshothandle) else { return; };
     //aspect ratio = x / y
     let screenshot_ratio = {
@@ -117,4 +116,14 @@ pub(crate) fn fit_screenshot(
     } else {
         Size::new(Val::Auto, Val::Percent(100.))
     };
+}
+
+pub(crate) fn update_text_bg(
+    mut q: Query<(&mut Style, &Parent), With<TextBg>>,
+    calc_sizes: Query<(&CalculatedSize,), With<Text>>,
+) {
+    for (mut style, parent) in q.iter_mut() {
+        let (parent_style,) = calc_sizes.get(parent.get()).unwrap();
+        style.size = parent_style.size;
+    }
 }
