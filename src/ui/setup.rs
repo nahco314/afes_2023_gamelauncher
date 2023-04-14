@@ -293,7 +293,7 @@ mod game_detail {
                     right: Val::Px(20.),
                     ..Default::default()
                 },
-                max_size: Size::new(Val::Px(crate::ui::GAME_DESC_TEXT_WIDTH), Val::Auto),
+                max_size: Size::new(Val::Px(crate::ui::GAME_DESC_WIDTH_MAX), Val::Auto),
                 ..Default::default()
             })
             .with_text_alignment(TextAlignment::TOP_LEFT);
@@ -336,7 +336,7 @@ mod game_detail {
                         right: Val::Px(20.),
                         bottom: Val::Px(30.),
                     },
-                    max_size: Size::new(Val::Px(crate::ui::GAME_AUTHOR_TEXT_WIDTH), Val::Auto),
+                    max_size: Size::new(Val::Px(crate::ui::GAME_AUTHOR_WIDTH_MAX), Val::Auto),
                     ..Default::default()
                 });
                 tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
@@ -363,7 +363,7 @@ pub mod play_button {
                 },
                 ..Default::default()
             },
-            background_color: crate::ui::BUTTON_COLOR,
+            background_color: crate::ui::BUTTON_COLOR_NORMAL,
             ..Default::default()
         }
     }

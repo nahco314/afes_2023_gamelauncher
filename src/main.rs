@@ -101,8 +101,8 @@ fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
             screenshot: asset_server.load(
                 d.path()
                     .iter()
-                    .skip(1)
-                    .collect::<PathBuf>() //skip "assets/"
+                    .skip(1) //skip "assets/"
+                    .collect::<PathBuf>()
                     .join("screenshot.png"),
             ),
         });
@@ -133,9 +133,9 @@ fn select_by_cursor(
     query: Query<(&Interaction, &GameIndex), Changed<Interaction>>,
     mut selected_idx: ResMut<SelectedIndex>,
 ) {
-    for e in query.iter() {
-        if *e.0 == Interaction::Clicked {
-            selected_idx.0 = e.1 .0;
+    for (interaction, idx) in query.iter() {
+        if *interaction == Interaction::Clicked {
+            selected_idx.0 = idx.0;
         }
     }
 }
@@ -156,5 +156,5 @@ fn run_game(selected_idx: &SelectedIndex, games: &Games) {
         .join(&games.0[selected_idx.0 as usize].path);
     let mut game_cmd = Command::new(&abs_path);
     game_cmd.current_dir(abs_path.parent().unwrap());
-    game_cmd.spawn().expect("failed run game");
+    game_cmd.spawn().expect("failed to run game");
 }

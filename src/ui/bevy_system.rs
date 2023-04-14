@@ -65,14 +65,13 @@ pub fn play_button_sys(
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
-    if let Ok((itr, mut col)) = q.get_single_mut() {
-        if *itr == Interaction::Hovered {
-            *col = super::BUTTON_HOVER;
-        } else {
-            *col = super::BUTTON_COLOR;
-            if *itr == Interaction::Clicked {
-                crate::run_game(&selected_idx, &games);
-            }
+    let Ok((interaction, mut color)) = q.get_single_mut() else { return; /* Changed<Interaction> didn't hit */ };
+    if *interaction == Interaction::Hovered {
+        *color = super::BUTTON_COLOR_HOVER;
+    } else {
+        *color = super::BUTTON_COLOR_NORMAL;
+        if *interaction == Interaction::Clicked {
+            crate::run_game(&selected_idx, &games);
         }
     }
 }
@@ -81,10 +80,10 @@ pub fn game_titles_ui_sys(
     mut q: Query<(&Interaction, &mut BackgroundColor, &GameIndex), With<GameIndex>>,
     selected_idx: Res<SelectedIndex>,
 ) {
-    for (itr, mut col, idx) in q.iter_mut() {
-        *col = if selected_idx.0 == idx.0 {
+    for (interaction, mut color, idx) in q.iter_mut() {
+        *color = if selected_idx.0 == idx.0 {
             super::SELECTED_GAME_TITLE_COLOR
-        } else if *itr == Interaction::Hovered {
+        } else if *interaction == Interaction::Hovered {
             super::GAME_TITLE_COLOR_HOVER
         } else {
             super::NORMAL_GAME_TITLE_COLOR
@@ -99,7 +98,7 @@ pub fn fit_screenshot(
     games: Res<Games>,
     assets: Res<Assets<Image>>,
 ) {
-    let Ok((mut style,)) = q.get_single_mut() else { return; };
+    let mut style = q.single_mut().0;
     let window = window.get_primary().unwrap();
     let screenshothandle = games.0[selected_idx.0 as usize].screenshot.clone();
     let Some(screenshot) = assets.get(&screenshothandle) else { return; };
@@ -109,7 +108,7 @@ pub fn fit_screenshot(
         size.x / size.y
     };
 
-    let window_ratio = { (window.width() - super::GAMES_LAVEL_WIDTH) / window.height() };
+    let window_ratio = (window.width() - super::GAMES_LAVEL_WIDTH) / window.height();
 
     style.size = if window_ratio > screenshot_ratio {
         Size::new(Val::Percent(100.), Val::Auto)
