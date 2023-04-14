@@ -96,11 +96,11 @@ mod games_label {
             style: Style {
                 flex_direction: FlexDirection::Column,
                 justify_content: JustifyContent::FlexStart,
-                size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
-                min_size: Size::new(Val::Px(crate::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
+                size: Size::new(Val::Px(crate::ui::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
+                min_size: Size::new(Val::Px(crate::ui::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
                 ..Default::default()
             },
-            background_color: crate::GAMES_LAVEL_COLOR,
+            background_color: crate::ui::GAMES_LAVEL_COLOR,
             ..Default::default()
         }
     }
@@ -110,7 +110,7 @@ mod games_label {
             "Games",
             TextStyle {
                 font_size: 35.,
-                color: crate::TEXT_COLOR,
+                color: crate::ui::TEXT_COLOR,
                 font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             },
         )
@@ -182,7 +182,7 @@ mod games_label {
                             TextStyle {
                                 font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
                                 font_size: 25.,
-                                color: crate::TEXT_COLOR,
+                                color: crate::ui::TEXT_COLOR,
                             },
                         )
                         .with_style(Style {
@@ -205,10 +205,8 @@ mod games_label {
 }
 
 mod game_detail {
-    use crate::Games;
+    use crate::{ui::setup::TEXT_Z_INDEX, Games};
     use bevy::{prelude::*, ui::widget::ImageMode};
-
-    use super::TEXT_Z_INDEX;
 
     pub fn root() -> NodeBundle {
         NodeBundle {
@@ -243,7 +241,7 @@ mod game_detail {
             TextStyle {
                 font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
                 font_size: 90.,
-                color: crate::TEXT_COLOR,
+                color: crate::ui::TEXT_COLOR,
             },
         )
         .with_style(Style {
@@ -262,7 +260,7 @@ mod game_detail {
     }
 
     pub mod additional {
-        use crate::{ui_setup::TEXT_Z_INDEX, Games};
+        use crate::{ui::setup::TEXT_Z_INDEX, Games};
         use bevy::prelude::*;
         pub fn root() -> NodeBundle {
             NodeBundle {
@@ -284,7 +282,7 @@ mod game_detail {
                 TextStyle {
                     font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
                     font_size: 50.,
-                    color: crate::TEXT_COLOR,
+                    color: crate::ui::TEXT_COLOR,
                 },
             )
             .with_style(Style {
@@ -295,7 +293,7 @@ mod game_detail {
                     right: Val::Px(20.),
                     ..Default::default()
                 },
-                max_size: Size::new(Val::Px(crate::GAME_DESC_TEXT_WIDTH), Val::Auto),
+                max_size: Size::new(Val::Px(crate::ui::GAME_DESC_TEXT_WIDTH), Val::Auto),
                 ..Default::default()
             })
             .with_text_alignment(TextAlignment::TOP_LEFT);
@@ -304,7 +302,7 @@ mod game_detail {
         }
 
         pub mod author {
-            use crate::{ui_setup::TEXT_Z_INDEX, Games};
+            use crate::{ui::setup::TEXT_Z_INDEX, Games};
             use bevy::prelude::*;
             pub fn root() -> NodeBundle {
                 NodeBundle {
@@ -326,7 +324,7 @@ mod game_detail {
                     TextStyle {
                         font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
                         font_size: 40.,
-                        color: crate::TEXT_COLOR,
+                        color: crate::ui::TEXT_COLOR,
                     },
                 )
                 .with_text_alignment(TextAlignment::CENTER_LEFT)
@@ -338,7 +336,7 @@ mod game_detail {
                         right: Val::Px(20.),
                         bottom: Val::Px(30.),
                     },
-                    max_size: Size::new(Val::Px(crate::GAME_AUTHOR_TEXT_WIDTH), Val::Auto),
+                    max_size: Size::new(Val::Px(crate::ui::GAME_AUTHOR_TEXT_WIDTH), Val::Auto),
                     ..Default::default()
                 });
                 tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
@@ -365,7 +363,7 @@ pub mod play_button {
                 },
                 ..Default::default()
             },
-            background_color: crate::BUTTON_COLOR,
+            background_color: crate::ui::BUTTON_COLOR,
             ..Default::default()
         }
     }
@@ -375,7 +373,7 @@ pub mod play_button {
             TextStyle {
                 font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
                 font_size: 40.,
-                color: crate::TEXT_COLOR,
+                color: crate::ui::TEXT_COLOR,
             },
         )
     }
@@ -387,7 +385,7 @@ fn text_bg() -> NodeBundle {
             size: Size::new(Val::Px(0.), Val::Px(0.)),
             ..Default::default()
         },
-        background_color: crate::TEXT_BG_COLOR,
+        background_color: super::TEXT_BG_COLOR,
         z_index: ZIndex::Global(TEXT_BG_Z_INDEX),
         ..Default::default()
     }

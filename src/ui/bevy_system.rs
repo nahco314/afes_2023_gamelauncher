@@ -4,7 +4,7 @@ use crate::{
 };
 use bevy::prelude::*;
 
-pub(crate) fn update_title_text(
+pub fn update_title_text(
     mut title_text: Query<(&mut Text,), With<GameTitleText>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
@@ -15,12 +15,12 @@ pub(crate) fn update_title_text(
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             font_size: 100.,
-            color: crate::TEXT_COLOR,
+            color: super::TEXT_COLOR,
         },
     }]
 }
 
-pub(crate) fn update_desc_text(
+pub fn update_desc_text(
     mut desc_text: Query<(&mut Text,), With<GameDescriptionText>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
@@ -31,12 +31,12 @@ pub(crate) fn update_desc_text(
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             font_size: 50.,
-            color: crate::TEXT_COLOR,
+            color: super::TEXT_COLOR,
         },
     }]
 }
 
-pub(crate) fn update_author_text(
+pub fn update_author_text(
     mut author_text: Query<(&mut Text,), With<GameAuthorText>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
@@ -47,12 +47,12 @@ pub(crate) fn update_author_text(
         style: TextStyle {
             font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
             font_size: 40.,
-            color: crate::TEXT_COLOR,
+            color: super::TEXT_COLOR,
         },
     }]
 }
 
-pub(crate) fn update_screenshot(
+pub fn update_screenshot(
     mut image: Query<(&mut UiImage,), With<GameScreenShot>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
@@ -60,16 +60,16 @@ pub(crate) fn update_screenshot(
     image.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
 }
 
-pub(crate) fn play_button_sys(
+pub fn play_button_sys(
     mut q: Query<(&Interaction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
     if let Ok((itr, mut col)) = q.get_single_mut() {
         if *itr == Interaction::Hovered {
-            *col = crate::BUTTON_HOVER;
+            *col = super::BUTTON_HOVER;
         } else {
-            *col = crate::BUTTON_COLOR;
+            *col = super::BUTTON_COLOR;
             if *itr == Interaction::Clicked {
                 crate::run_game(&selected_idx, &games);
             }
@@ -77,22 +77,22 @@ pub(crate) fn play_button_sys(
     }
 }
 
-pub(crate) fn game_titles_ui_sys(
+pub fn game_titles_ui_sys(
     mut q: Query<(&Interaction, &mut BackgroundColor, &GameIndex), With<GameIndex>>,
     selected_idx: Res<SelectedIndex>,
 ) {
     for (itr, mut col, idx) in q.iter_mut() {
         *col = if selected_idx.0 == idx.0 {
-            crate::SELECTED_GAME_TITLE_COLOR
+            super::SELECTED_GAME_TITLE_COLOR
         } else if *itr == Interaction::Hovered {
-            crate::GAME_TITLE_COLOR_HOVER
+            super::GAME_TITLE_COLOR_HOVER
         } else {
-            crate::NORMAL_GAME_TITLE_COLOR
+            super::NORMAL_GAME_TITLE_COLOR
         }
     }
 }
 
-pub(crate) fn fit_screenshot(
+pub fn fit_screenshot(
     mut q: Query<(&mut Style,), With<GameScreenShot>>,
     window: Res<Windows>,
     selected_idx: Res<SelectedIndex>,
@@ -109,7 +109,7 @@ pub(crate) fn fit_screenshot(
         size.x / size.y
     };
 
-    let window_ratio = { (window.width() - crate::GAMES_LAVEL_WIDTH) / window.height() };
+    let window_ratio = { (window.width() - super::GAMES_LAVEL_WIDTH) / window.height() };
 
     style.size = if window_ratio > screenshot_ratio {
         Size::new(Val::Percent(100.), Val::Auto)
@@ -118,7 +118,7 @@ pub(crate) fn fit_screenshot(
     };
 }
 
-pub(crate) fn update_text_bg(
+pub fn update_text_bg(
     mut q: Query<(&mut Style, &Parent), With<TextBg>>,
     calc_sizes: Query<(&CalculatedSize,), With<Text>>,
 ) {

@@ -1,7 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod ui_setup;
-mod ui_sys;
+mod ui;
 
 use bevy::{prelude::*, window::WindowResizeConstraints, winit::WinitSettings};
 use serde::Deserialize;
@@ -10,23 +9,6 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
 };
-
-const SELECTED_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.53, 0.65, 0.73));
-const NORMAL_GAME_TITLE_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.24, 0.26));
-const GAME_TITLE_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.2, 0.41, 0.52));
-const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.4, 0.40));
-const TEXT_COLOR: Color = Color::rgb(1.0, 1.0, 1.0);
-const BUTTON_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.76, 0.12));
-const BUTTON_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
-const TEXT_BG_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
-    red: 0.,
-    green: 0.,
-    blue: 0.,
-    alpha: 0.55,
-});
-const GAMES_LAVEL_WIDTH: f32 = 360.;
-const GAME_DESC_TEXT_WIDTH: f32 = 900.;
-const GAME_AUTHOR_TEXT_WIDTH: f32 = 650.;
 
 pub struct Game {
     path: PathBuf,
@@ -48,25 +30,25 @@ struct GameManifest {
 #[derive(Resource)]
 pub struct Games(Vec<Game>);
 #[derive(Resource)]
-struct SelectedIndex(u32);
+pub struct SelectedIndex(u32);
 
 #[derive(Component)]
-struct GameIndex(u32);
+pub struct GameIndex(u32);
 
 #[derive(Component)]
-struct GameTitleText;
+pub struct GameTitleText;
 
 #[derive(Component)]
-struct GameDescriptionText;
+pub struct GameDescriptionText;
 
 #[derive(Component)]
-struct GameAuthorText;
+pub struct GameAuthorText;
 
 #[derive(Component)]
-struct GameScreenShot;
+pub struct GameScreenShot;
 
 #[derive(Component)]
-struct TextBg;
+pub struct TextBg;
 
 fn main() {
     App::new()
@@ -91,18 +73,18 @@ fn main() {
         .insert_resource(Games(Vec::new()))
         .insert_resource(SelectedIndex(0))
         .add_startup_system(load_game_folder)
-        .add_startup_system(ui_setup::setup.after(load_game_folder))
+        .add_startup_system(ui::setup::setup.after(load_game_folder))
         .add_system(select_by_keybord)
         .add_system(select_by_cursor)
         .add_system(run_by_keybord_sys)
-        .add_system(ui_sys::play_button_sys)
-        .add_system(ui_sys::update_title_text)
-        .add_system(ui_sys::update_desc_text)
-        .add_system(ui_sys::update_author_text)
-        .add_system(ui_sys::update_screenshot)
-        .add_system(ui_sys::game_titles_ui_sys)
-        .add_system(ui_sys::fit_screenshot)
-        .add_system(ui_sys::update_text_bg)
+        .add_system(ui::bevy_system::play_button_sys)
+        .add_system(ui::bevy_system::update_title_text)
+        .add_system(ui::bevy_system::update_desc_text)
+        .add_system(ui::bevy_system::update_author_text)
+        .add_system(ui::bevy_system::update_screenshot)
+        .add_system(ui::bevy_system::game_titles_ui_sys)
+        .add_system(ui::bevy_system::fit_screenshot)
+        .add_system(ui::bevy_system::update_text_bg)
         .run();
 }
 
