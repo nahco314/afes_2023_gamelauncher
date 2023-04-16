@@ -11,7 +11,7 @@ pub fn update_title_text(
 ) {
     title_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].title.clone(),
-        style: create_text_style(GAME_TITLE_TEXT_SIZE, &asset_server),
+        style: create_text_style(0., &asset_server),
     }]
 }
 
@@ -23,7 +23,7 @@ pub fn update_desc_text(
 ) {
     desc_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].description.clone(),
-        style: create_text_style(DESCRIPTION_TEXT_SIZE, &asset_server),
+        style: create_text_style(0., &asset_server),
     }]
 }
 
@@ -155,4 +155,29 @@ pub fn selected_idx_changed(selected_idx: Res<SelectedIndex>) -> ShouldRun {
     } else {
         ShouldRun::No
     }
+}
+
+pub fn adjust_title_size(
+    mut game_title: Query<(&mut Text, &mut Style), With<GameTitleText>>,
+    window: Res<Windows>,
+) {
+    let window = window.get_primary().unwrap();
+    let (mut text, mut style) = game_title.single_mut();
+    let detail_root_width = window.width() - GAMES_LAVEL_WIDTH;
+    text.sections[0].style.font_size = detail_root_width * GAME_TITLE_FONT_SIZE_RATIO;
+    style.max_size = Size::new(Val::Px(detail_root_width * 0.9), Val::Undefined);
+}
+
+pub fn adjust_description_size(
+    mut description: Query<(&mut Text, &mut Style), With<GameDescriptionText>>,
+    window: Res<Windows>,
+) {
+    let window = window.get_primary().unwrap();
+    let (mut text, mut style) = description.single_mut();
+    let detail_root_width = window.width() - GAMES_LAVEL_WIDTH;
+    text.sections[0].style.font_size = detail_root_width * DESCRIPTION_FONT_SIZE_RATIO;
+    style.max_size = Size::new(
+        Val::Px(DESCRIPTION_WIDTH_MIN.max(detail_root_width * 0.5)),
+        Val::Undefined,
+    );
 }

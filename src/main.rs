@@ -16,8 +16,8 @@ fn main() {
                 resizable: true,
                 title: "Afes 2022 Game Launcher".to_owned(),
                 resize_constraints: WindowResizeConstraints {
-                    min_width: 1280.,
-                    min_height: 680.,
+                    min_width: 960.,
+                    min_height: 540.,
                     max_height: f32::INFINITY,
                     max_width: f32::INFINITY,
                 },
@@ -41,5 +41,7 @@ fn main() {
         .add_system(game_cards_ui)
         .add_system(fit_screenshot)
         .add_system(update_text_bg)
+        .add_system(adjust_title_size.after(update_title_text))
+        .add_system(adjust_description_size.after(update_desc_text))
         .run();
 }

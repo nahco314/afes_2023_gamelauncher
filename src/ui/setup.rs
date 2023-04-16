@@ -109,16 +109,20 @@ mod games_label {
     }
 
     pub fn title(asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section(GAMES_LAVEL_TITLE, create_text_style(35., asset_server))
-            .with_style(Style {
-                size: Size::new(Val::Undefined, Val::Px(35.)),
-                margin: UiRect {
-                    left: Val::Auto,
-                    right: Val::Auto,
+        let mut tmp =
+            TextBundle::from_section(GAMES_LAVEL_TITLE, create_text_style(30., asset_server))
+                .with_style(Style {
+                    max_size: Size::new(Val::Undefined, Val::Px(33.)),
+                    min_size: Size::new(Val::Undefined, Val::Px(33.)),
+                    margin: UiRect {
+                        left: Val::Auto,
+                        right: Val::Auto,
+                        ..Default::default()
+                    },
                     ..Default::default()
-                },
-                ..Default::default()
-            })
+                });
+        tmp.text.alignment = TextAlignment::CENTER;
+        tmp
     }
 
     pub mod cards {
@@ -164,7 +168,8 @@ mod games_label {
                         style: Style {
                             flex_direction: FlexDirection::Column,
                             flex_grow: 1.0,
-                            max_size: Size::new(Val::Undefined, Val::Undefined),
+                            min_size: Size::new(Val::Undefined, Val::Px(26.)),
+                            max_size: Size::new(Val::Undefined, Val::Px(26.)),
                             ..Default::default()
                         },
                         background_color: BackgroundColor(Color::NONE),
@@ -180,7 +185,6 @@ mod games_label {
                         )
                         .with_style(Style {
                             flex_shrink: 0.,
-                            size: Size::new(Val::Undefined, Val::Px(25.)),
                             margin: UiRect {
                                 left: Val::Px(5.0),
                                 right: Val::Auto,
@@ -231,7 +235,7 @@ mod game_detail {
     pub fn title(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
         let mut tmp = TextBundle::from_section(
             games.0[0].title.clone(),
-            create_text_style(GAME_TITLE_TEXT_SIZE, asset_server),
+            create_text_style(0., asset_server),
         )
         .with_style(Style {
             size: Size::new(Val::Auto, Val::Auto),
@@ -268,7 +272,7 @@ mod game_detail {
         pub fn description(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
             let mut tmp = TextBundle::from_section(
                 games.0[0].description.clone(),
-                create_text_style(DESCRIPTION_TEXT_SIZE, asset_server),
+                create_text_style(0., asset_server),
             )
             .with_style(Style {
                 align_self: AlignSelf::FlexStart,
@@ -278,7 +282,7 @@ mod game_detail {
                     right: Val::Px(20.),
                     ..Default::default()
                 },
-                max_size: Size::new(Val::Px(DESCRIPTION_WIDTH_MAX), Val::Undefined),
+                max_size: Size::new(Val::Px(DESCRIPTION_WIDTH_MIN), Val::Undefined),
                 ..Default::default()
             })
             .with_text_alignment(TextAlignment::TOP_LEFT);

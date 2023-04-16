@@ -11,12 +11,12 @@ const BUTTON_COLOR_NORMAL: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.
 const BUTTON_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
 const GAMES_LAVEL_TITLE: &str = "マウスか上下方向キーで選択";
 
-const GAMES_LAVEL_WIDTH: f32 = 360.;
-const DESCRIPTION_WIDTH_MAX: f32 = 900.;
+const GAMES_LAVEL_WIDTH: f32 = 330.;
+const DESCRIPTION_WIDTH_MIN: f32 = 600.;
 
-const GAME_TITLE_TEXT_SIZE: f32 = 100.;
 const AUTHOR_NAME_TEXT_SIZE: f32 = 40.;
-const DESCRIPTION_TEXT_SIZE: f32 = 50.;
+const GAME_TITLE_FONT_SIZE_RATIO: f32 = 0.065;
+const DESCRIPTION_FONT_SIZE_RATIO: f32 = 0.045;
 
 #[derive(Component)]
 pub struct GameIndex(pub u32);
