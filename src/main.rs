@@ -4,6 +4,7 @@ mod core;
 mod ui;
 
 use bevy::{prelude::*, window::WindowResizeConstraints, winit::WinitSettings};
+use ui::bevy_system::*;
 
 fn main() {
     App::new()
@@ -29,16 +30,16 @@ fn main() {
         .insert_resource(core::SelectedIndex(0))
         .add_startup_system(core::load_game_folder)
         .add_startup_system(ui::setup::setup.after(core::load_game_folder))
-        .add_system(ui::bevy_system::select_by_keybord)
-        .add_system(ui::bevy_system::select_by_cursor)
-        .add_system(ui::bevy_system::run_by_keybord_sys)
-        .add_system(ui::bevy_system::handle_play_button)
-        .add_system(ui::bevy_system::update_title_text)
-        .add_system(ui::bevy_system::update_desc_text)
-        .add_system(ui::bevy_system::update_author_text)
-        .add_system(ui::bevy_system::update_screenshot)
-        .add_system(ui::bevy_system::game_cards_ui)
-        .add_system(ui::bevy_system::fit_screenshot)
-        .add_system(ui::bevy_system::update_text_bg)
+        .add_system(select_by_keybord)
+        .add_system(select_by_cursor)
+        .add_system(run_by_keybord_sys)
+        .add_system(handle_play_button)
+        .add_system(update_title_text.with_run_criteria(selected_idx_changed))
+        .add_system(update_desc_text.with_run_criteria(selected_idx_changed))
+        .add_system(update_author_text.with_run_criteria(selected_idx_changed))
+        .add_system(update_screenshot.with_run_criteria(selected_idx_changed))
+        .add_system(game_cards_ui)
+        .add_system(fit_screenshot)
+        .add_system(update_text_bg)
         .run();
 }

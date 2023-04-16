@@ -1,3 +1,5 @@
+use bevy::ecs::schedule::ShouldRun;
+
 use super::*;
 use crate::core::{Games, SelectedIndex};
 
@@ -144,5 +146,13 @@ pub fn run_by_keybord_sys(
 ) {
     if key_input.just_pressed(KeyCode::Return) {
         crate::core::run_game(&selected_idx, &games);
+    }
+}
+
+pub fn selected_idx_changed(selected_idx: Res<SelectedIndex>) -> ShouldRun {
+    if selected_idx.is_changed() {
+        ShouldRun::Yes
+    } else {
+        ShouldRun::No
     }
 }
