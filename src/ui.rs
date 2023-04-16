@@ -9,6 +9,7 @@ const GAME_CARD_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.2, 0
 const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.4, 0.40));
 const BUTTON_COLOR_NORMAL: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.76, 0.12));
 const BUTTON_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
+const GAMES_LAVEL_TITLE: &str = "マウスか上下方向キーで選択";
 
 const GAMES_LAVEL_WIDTH: f32 = 360.;
 const DESCRIPTION_WIDTH_MAX: f32 = 900.;

@@ -109,15 +109,16 @@ mod games_label {
     }
 
     pub fn title(asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section("Games", create_text_style(35., asset_server)).with_style(Style {
-            size: Size::new(Val::Undefined, Val::Px(35.)),
-            margin: UiRect {
-                left: Val::Auto,
-                right: Val::Auto,
+        TextBundle::from_section(GAMES_LAVEL_TITLE, create_text_style(35., asset_server))
+            .with_style(Style {
+                size: Size::new(Val::Undefined, Val::Px(35.)),
+                margin: UiRect {
+                    left: Val::Auto,
+                    right: Val::Auto,
+                    ..Default::default()
+                },
                 ..Default::default()
-            },
-            ..Default::default()
-        })
+            })
     }
 
     pub mod cards {
@@ -197,8 +198,8 @@ mod games_label {
 }
 
 mod game_detail {
-    use crate::ui::{*,setup::TEXT_Z_INDEX};
     use crate::core::Games;
+    use crate::ui::{setup::TEXT_Z_INDEX, *};
     use bevy::ui::widget::ImageMode;
 
     pub fn root() -> NodeBundle {
@@ -248,8 +249,8 @@ mod game_detail {
     }
 
     pub mod additional {
-        use crate::ui::{*,setup::TEXT_Z_INDEX};
         use crate::core::Games;
+        use crate::ui::{setup::TEXT_Z_INDEX, *};
 
         pub fn root() -> NodeBundle {
             NodeBundle {
@@ -332,7 +333,7 @@ pub mod play_button {
     pub fn root_button() -> ButtonBundle {
         ButtonBundle {
             style: Style {
-                size: Size::new(Val::Px(200.), Val::Px(60.)),
+                size: Size::new(Val::Px(250.), Val::Px(90.)),
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::Center,
                 position_type: PositionType::Absolute,
@@ -348,7 +349,12 @@ pub mod play_button {
         }
     }
     pub fn text(asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section("プレイ", create_text_style(40., asset_server))
+        let mut tmp = TextBundle::from_sections(vec![
+            TextSection::new("プレイ", create_text_style(52., asset_server)),
+            TextSection::new("\n(Enter)", create_text_style(28., asset_server)),
+        ]);
+        tmp.text.alignment = TextAlignment::CENTER;
+        tmp
     }
 }
 
