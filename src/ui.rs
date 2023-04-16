@@ -3,10 +3,10 @@ use bevy::{prelude::*, text::TextStyle, ui::BackgroundColor};
 pub mod bevy_system;
 pub mod setup;
 
-const GAME_CARD_COLOR_SELECTED: BackgroundColor = BackgroundColor(Color::rgb(0.53, 0.65, 0.73));
-const GAME_CARD_COLOR_NORMAL: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.24, 0.26));
-const GAME_CARD_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.2, 0.41, 0.52));
-const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.20, 0.4, 0.40));
+const GAME_CARD_COLOR_SELECTED: BackgroundColor = BackgroundColor(Color::rgb(0.21, 0.42, 0.36));
+const GAME_CARD_COLOR_NORMAL: BackgroundColor = BackgroundColor(Color::rgb(0.17, 0.17, 0.17));
+const GAME_CARD_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.22, 0.22, 0.22));
+const GAMES_LAVEL_COLOR: BackgroundColor = BackgroundColor(Color::rgb(0.11, 0.11, 0.11));
 const BUTTON_COLOR_NORMAL: BackgroundColor = BackgroundColor(Color::rgb(0.12, 0.76, 0.12));
 const BUTTON_COLOR_HOVER: BackgroundColor = BackgroundColor(Color::rgb(0.25, 0.82, 0.25));
 const GAMES_LAVEL_TITLE: &str = "マウスか上下方向キーで選択";
