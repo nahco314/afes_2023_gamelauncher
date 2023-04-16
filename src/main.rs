@@ -1,54 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod core;
 mod ui;
 
 use bevy::{prelude::*, window::WindowResizeConstraints, winit::WinitSettings};
-use serde::Deserialize;
-use std::{
-    env, fs,
-    path::{Path, PathBuf},
-    process::Command,
-};
-
-pub struct Game {
-    path: PathBuf,
-    title: String,
-    description: String,
-    author: String,
-    screenshot: Handle<Image>,
-}
-
-#[allow(dead_code)]
-#[derive(Deserialize, Debug)]
-struct GameManifest {
-    title: String,
-    description: String,
-    author: String,
-    game_exe_name: String,
-}
-
-#[derive(Resource)]
-pub struct Games(Vec<Game>);
-#[derive(Resource)]
-pub struct SelectedIndex(u32);
-
-#[derive(Component)]
-pub struct GameIndex(u32);
-
-#[derive(Component)]
-pub struct GameTitleText;
-
-#[derive(Component)]
-pub struct GameDescriptionText;
-
-#[derive(Component)]
-pub struct GameAuthorText;
-
-#[derive(Component)]
-pub struct GameScreenShot;
-
-#[derive(Component)]
-pub struct TextBg;
 
 fn main() {
     App::new()
@@ -70,91 +25,20 @@ fn main() {
             },
             ..Default::default()
         }))
-        .insert_resource(Games(Vec::new()))
-        .insert_resource(SelectedIndex(0))
-        .add_startup_system(load_game_folder)
-        .add_startup_system(ui::setup::setup.after(load_game_folder))
-        .add_system(select_by_keybord)
-        .add_system(select_by_cursor)
-        .add_system(run_by_keybord_sys)
-        .add_system(ui::bevy_system::play_button_sys)
+        .insert_resource(core::Games(Vec::new()))
+        .insert_resource(core::SelectedIndex(0))
+        .add_startup_system(core::load_game_folder)
+        .add_startup_system(ui::setup::setup.after(core::load_game_folder))
+        .add_system(ui::bevy_system::select_by_keybord)
+        .add_system(ui::bevy_system::select_by_cursor)
+        .add_system(ui::bevy_system::run_by_keybord_sys)
+        .add_system(ui::bevy_system::handle_play_button)
         .add_system(ui::bevy_system::update_title_text)
         .add_system(ui::bevy_system::update_desc_text)
         .add_system(ui::bevy_system::update_author_text)
         .add_system(ui::bevy_system::update_screenshot)
-        .add_system(ui::bevy_system::game_titles_ui_sys)
+        .add_system(ui::bevy_system::game_cards_ui)
         .add_system(ui::bevy_system::fit_screenshot)
         .add_system(ui::bevy_system::update_text_bg)
         .run();
-}
-
-fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
-    for d in fs::read_dir("assets/games").unwrap().filter_map(|e| e.ok()) {
-        info!("{:?}", d.path());
-        let game_manifest = get_game_manifest(d.path());
-        info!("{:?}", game_manifest);
-        games.0.push(Game {
-            path: d.path().join(game_manifest.game_exe_name),
-            title: game_manifest.title,
-            description: game_manifest.description,
-            author: game_manifest.author,
-            screenshot: asset_server.load(
-                d.path()
-                    .iter()
-                    .skip(1) //skip "assets/"
-                    .collect::<PathBuf>()
-                    .join("screenshot.png"),
-            ),
-        });
-    }
-}
-
-fn get_game_manifest<P: AsRef<Path>>(path: P) -> GameManifest {
-    let manifest_file = path.as_ref().join("launcher_manifest.toml");
-    let manifest_file_content = fs::read_to_string(manifest_file).unwrap();
-    toml::from_str::<GameManifest>(&manifest_file_content).unwrap()
-}
-
-fn select_by_keybord(
-    key_input: Res<Input<KeyCode>>,
-    mut selected_idx: ResMut<SelectedIndex>,
-    games: Res<Games>,
-) {
-    if key_input.just_pressed(KeyCode::Up) && selected_idx.0 != 0 {
-        selected_idx.0 -= 1;
-    }
-
-    if key_input.just_pressed(KeyCode::Down) && selected_idx.0 != games.0.len() as u32 - 1 {
-        selected_idx.0 += 1;
-    }
-}
-
-fn select_by_cursor(
-    query: Query<(&Interaction, &GameIndex), Changed<Interaction>>,
-    mut selected_idx: ResMut<SelectedIndex>,
-) {
-    for (interaction, idx) in query.iter() {
-        if *interaction == Interaction::Clicked {
-            selected_idx.0 = idx.0;
-        }
-    }
-}
-
-fn run_by_keybord_sys(
-    key_input: Res<Input<KeyCode>>,
-    selected_idx: Res<SelectedIndex>,
-    games: Res<Games>,
-) {
-    if key_input.just_pressed(KeyCode::Return) {
-        run_game(&selected_idx, &games);
-    }
-}
-
-fn run_game(selected_idx: &SelectedIndex, games: &Games) {
-    let abs_path = env::current_dir()
-        .unwrap()
-        .join(&games.0[selected_idx.0 as usize].path);
-    let mut game_cmd = Command::new(&abs_path);
-    game_cmd.current_dir(abs_path.parent().unwrap());
-    game_cmd.spawn().expect("failed to run game");
 }

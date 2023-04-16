@@ -1,12 +1,16 @@
-use crate::{
-    GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games, TextBg,
-};
-use bevy::prelude::*;
+use super::*;
+use crate::core::Games;
 
 const TEXT_Z_INDEX: i32 = 2;
 const TEXT_BG_Z_INDEX: i32 = 1;
+const TEXT_BG_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.,
+    green: 0.,
+    blue: 0.,
+    alpha: 0.55,
+});
 
-pub(crate) fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
+pub fn setup(mut cmd: Commands, asset_server: Res<AssetServer>, games: Res<Games>) {
     cmd.spawn(Camera2dBundle::default());
     cmd.spawn(root())
         .with_children(|p| {
@@ -78,7 +82,6 @@ fn root() -> NodeBundle {
     NodeBundle {
         style: Style {
             size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-            max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
             justify_content: JustifyContent::FlexStart,
             ..Default::default()
         },
@@ -89,32 +92,24 @@ fn root() -> NodeBundle {
 
 mod games_label {
 
-    use bevy::prelude::*;
+    use crate::ui::*;
 
     pub fn root() -> NodeBundle {
         NodeBundle {
             style: Style {
                 flex_direction: FlexDirection::Column,
                 justify_content: JustifyContent::FlexStart,
-                size: Size::new(Val::Px(crate::ui::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
-                min_size: Size::new(Val::Px(crate::ui::GAMES_LAVEL_WIDTH), Val::Percent(100.)),
+                size: Size::new(Val::Px(GAMES_LAVEL_WIDTH), Val::Percent(100.)),
+                min_size: Size::new(Val::Px(GAMES_LAVEL_WIDTH), Val::Percent(100.)),
                 ..Default::default()
             },
-            background_color: crate::ui::GAMES_LAVEL_COLOR,
+            background_color: GAMES_LAVEL_COLOR,
             ..Default::default()
         }
     }
 
     pub fn title(asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section(
-            "Games",
-            TextStyle {
-                font_size: 35.,
-                color: crate::ui::TEXT_COLOR,
-                font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-            },
-        )
-        .with_style(Style {
+        TextBundle::from_section("Games", create_text_style(35., asset_server)).with_style(Style {
             size: Size::new(Val::Undefined, Val::Px(35.)),
             margin: UiRect {
                 left: Val::Auto,
@@ -159,8 +154,9 @@ mod games_label {
             }
 
             pub mod card {
-                use crate::Game;
-                use bevy::{prelude::*, ui::FocusPolicy};
+                use crate::core::Game;
+                use crate::ui::*;
+                use bevy::ui::FocusPolicy;
 
                 pub fn root() -> NodeBundle {
                     NodeBundle {
@@ -179,11 +175,7 @@ mod games_label {
                     {
                         let mut tmp = TextBundle::from_section(
                             game.title.to_owned(),
-                            TextStyle {
-                                font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                                font_size: 25.,
-                                color: crate::ui::TEXT_COLOR,
-                            },
+                            create_text_style(25., asset_server),
                         )
                         .with_style(Style {
                             flex_shrink: 0.,
@@ -205,14 +197,14 @@ mod games_label {
 }
 
 mod game_detail {
-    use crate::{ui::setup::TEXT_Z_INDEX, Games};
-    use bevy::{prelude::*, ui::widget::ImageMode};
+    use crate::ui::{*,setup::TEXT_Z_INDEX};
+    use crate::core::Games;
+    use bevy::ui::widget::ImageMode;
 
     pub fn root() -> NodeBundle {
         NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-                max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 flex_direction: FlexDirection::Column,
                 align_self: AlignSelf::FlexStart,
                 ..Default::default()
@@ -238,14 +230,10 @@ mod game_detail {
     pub fn title(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
         let mut tmp = TextBundle::from_section(
             games.0[0].title.clone(),
-            TextStyle {
-                font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                font_size: 90.,
-                color: crate::ui::TEXT_COLOR,
-            },
+            create_text_style(GAME_TITLE_TEXT_SIZE, asset_server),
         )
         .with_style(Style {
-            min_size: Size::new(Val::Undefined, Val::Px(90.)),
+            size: Size::new(Val::Auto, Val::Auto),
             align_self: AlignSelf::FlexStart,
             margin: UiRect {
                 left: Val::Px(20.),
@@ -260,13 +248,13 @@ mod game_detail {
     }
 
     pub mod additional {
-        use crate::{ui::setup::TEXT_Z_INDEX, Games};
-        use bevy::prelude::*;
+        use crate::ui::{*,setup::TEXT_Z_INDEX};
+        use crate::core::Games;
+
         pub fn root() -> NodeBundle {
             NodeBundle {
                 style: Style {
                     size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-                    max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                     flex_direction: FlexDirection::Column,
                     justify_content: JustifyContent::FlexStart,
                     ..Default::default()
@@ -279,11 +267,7 @@ mod game_detail {
         pub fn description(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
             let mut tmp = TextBundle::from_section(
                 games.0[0].description.clone(),
-                TextStyle {
-                    font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                    font_size: 50.,
-                    color: crate::ui::TEXT_COLOR,
-                },
+                create_text_style(DESCRIPTION_TEXT_SIZE, asset_server),
             )
             .with_style(Style {
                 align_self: AlignSelf::FlexStart,
@@ -293,7 +277,7 @@ mod game_detail {
                     right: Val::Px(20.),
                     ..Default::default()
                 },
-                max_size: Size::new(Val::Px(crate::ui::GAME_DESC_WIDTH_MAX), Val::Auto),
+                max_size: Size::new(Val::Px(DESCRIPTION_WIDTH_MAX), Val::Undefined),
                 ..Default::default()
             })
             .with_text_alignment(TextAlignment::TOP_LEFT);
@@ -302,13 +286,13 @@ mod game_detail {
         }
 
         pub mod author {
-            use crate::{ui::setup::TEXT_Z_INDEX, Games};
-            use bevy::prelude::*;
+            use crate::core::Games;
+            use crate::ui::{setup::TEXT_Z_INDEX, *};
+
             pub fn root() -> NodeBundle {
                 NodeBundle {
                     style: Style {
                         size: Size::new(Val::Percent(100.), Val::Percent(100.)),
-                        max_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                         flex_direction: FlexDirection::Column,
                         justify_content: JustifyContent::FlexEnd,
                         ..Default::default()
@@ -321,11 +305,7 @@ mod game_detail {
             pub fn text(games: &Res<Games>, asset_server: &Res<AssetServer>) -> TextBundle {
                 let mut tmp = TextBundle::from_section(
                     games.0[0].author.clone(),
-                    TextStyle {
-                        font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                        font_size: 40.,
-                        color: crate::ui::TEXT_COLOR,
-                    },
+                    create_text_style(AUTHOR_NAME_TEXT_SIZE, asset_server),
                 )
                 .with_text_alignment(TextAlignment::CENTER_LEFT)
                 .with_style(Style {
@@ -336,7 +316,7 @@ mod game_detail {
                         right: Val::Px(20.),
                         bottom: Val::Px(30.),
                     },
-                    max_size: Size::new(Val::Px(crate::ui::GAME_AUTHOR_WIDTH_MAX), Val::Auto),
+                    size: Size::new(Val::Auto, Val::Auto),
                     ..Default::default()
                 });
                 tmp.z_index = ZIndex::Global(TEXT_Z_INDEX);
@@ -347,8 +327,8 @@ mod game_detail {
 }
 
 pub mod play_button {
+    use crate::ui::*;
 
-    use bevy::prelude::*;
     pub fn root_button() -> ButtonBundle {
         ButtonBundle {
             style: Style {
@@ -363,29 +343,19 @@ pub mod play_button {
                 },
                 ..Default::default()
             },
-            background_color: crate::ui::BUTTON_COLOR_NORMAL,
+            background_color: BUTTON_COLOR_NORMAL,
             ..Default::default()
         }
     }
     pub fn text(asset_server: &Res<AssetServer>) -> TextBundle {
-        TextBundle::from_section(
-            "プレイ",
-            TextStyle {
-                font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-                font_size: 40.,
-                color: crate::ui::TEXT_COLOR,
-            },
-        )
+        TextBundle::from_section("プレイ", create_text_style(40., asset_server))
     }
 }
 
 fn text_bg() -> NodeBundle {
     NodeBundle {
-        style: Style {
-            size: Size::new(Val::Px(0.), Val::Px(0.)),
-            ..Default::default()
-        },
-        background_color: super::TEXT_BG_COLOR,
+        style: Style::default(),
+        background_color: TEXT_BG_COLOR,
         z_index: ZIndex::Global(TEXT_BG_Z_INDEX),
         ..Default::default()
     }

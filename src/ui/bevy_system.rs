@@ -1,8 +1,5 @@
-use crate::{
-    GameAuthorText, GameDescriptionText, GameIndex, GameScreenShot, GameTitleText, Games,
-    SelectedIndex, TextBg,
-};
-use bevy::prelude::*;
+use super::*;
+use crate::core::{Games, SelectedIndex};
 
 pub fn update_title_text(
     mut title_text: Query<(&mut Text,), With<GameTitleText>>,
@@ -12,11 +9,7 @@ pub fn update_title_text(
 ) {
     title_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].title.clone(),
-        style: TextStyle {
-            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-            font_size: 100.,
-            color: super::TEXT_COLOR,
-        },
+        style: create_text_style(GAME_TITLE_TEXT_SIZE, &asset_server),
     }]
 }
 
@@ -28,11 +21,7 @@ pub fn update_desc_text(
 ) {
     desc_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].description.clone(),
-        style: TextStyle {
-            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-            font_size: 50.,
-            color: super::TEXT_COLOR,
-        },
+        style: create_text_style(DESCRIPTION_TEXT_SIZE, &asset_server),
     }]
 }
 
@@ -44,49 +33,45 @@ pub fn update_author_text(
 ) {
     author_text.single_mut().0.sections = vec![TextSection {
         value: games.0[selected_idx.0 as usize].author.clone(),
-        style: TextStyle {
-            font: asset_server.load("fonts/NotoSansCJKjp-DemiLight.otf"),
-            font_size: 40.,
-            color: super::TEXT_COLOR,
-        },
+        style: create_text_style(AUTHOR_NAME_TEXT_SIZE, &asset_server),
     }]
 }
 
 pub fn update_screenshot(
-    mut image: Query<(&mut UiImage,), With<GameScreenShot>>,
+    mut background_screen_shot: Query<(&mut UiImage,), With<GameScreenShot>>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
-    image.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
+    background_screen_shot.single_mut().0 .0 = games.0[selected_idx.0 as usize].screenshot.clone();
 }
 
-pub fn play_button_sys(
+pub fn handle_play_button(
     mut q: Query<(&Interaction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
     selected_idx: Res<SelectedIndex>,
     games: Res<Games>,
 ) {
     let Ok((interaction, mut color)) = q.get_single_mut() else { return; /* Changed<Interaction> didn't hit */ };
     if *interaction == Interaction::Hovered {
-        *color = super::BUTTON_COLOR_HOVER;
+        *color = BUTTON_COLOR_HOVER;
     } else {
-        *color = super::BUTTON_COLOR_NORMAL;
+        *color = BUTTON_COLOR_NORMAL;
         if *interaction == Interaction::Clicked {
-            crate::run_game(&selected_idx, &games);
+            crate::core::run_game(&selected_idx, &games);
         }
     }
 }
 
-pub fn game_titles_ui_sys(
+pub fn game_cards_ui(
     mut q: Query<(&Interaction, &mut BackgroundColor, &GameIndex), With<GameIndex>>,
     selected_idx: Res<SelectedIndex>,
 ) {
     for (interaction, mut color, idx) in q.iter_mut() {
         *color = if selected_idx.0 == idx.0 {
-            super::SELECTED_GAME_TITLE_COLOR
+            GAME_CARD_COLOR_SELECTED
         } else if *interaction == Interaction::Hovered {
-            super::GAME_TITLE_COLOR_HOVER
+            GAME_CARD_COLOR_HOVER
         } else {
-            super::NORMAL_GAME_TITLE_COLOR
+            GAME_CARD_COLOR_NORMAL
         }
     }
 }
@@ -108,7 +93,7 @@ pub fn fit_screenshot(
         size.x / size.y
     };
 
-    let window_ratio = (window.width() - super::GAMES_LAVEL_WIDTH) / window.height();
+    let window_ratio = (window.width() - GAMES_LAVEL_WIDTH) / window.height();
 
     style.size = if window_ratio > screenshot_ratio {
         Size::new(Val::Percent(100.), Val::Auto)
@@ -124,5 +109,40 @@ pub fn update_text_bg(
     for (mut style, parent) in q.iter_mut() {
         let (parent_style,) = calc_sizes.get(parent.get()).unwrap();
         style.size = parent_style.size;
+    }
+}
+
+pub fn select_by_keybord(
+    key_input: Res<Input<KeyCode>>,
+    mut selected_idx: ResMut<SelectedIndex>,
+    games: Res<Games>,
+) {
+    if key_input.just_pressed(KeyCode::Up) && selected_idx.0 != 0 {
+        selected_idx.0 -= 1;
+    }
+
+    if key_input.just_pressed(KeyCode::Down) && selected_idx.0 != games.0.len() as u32 - 1 {
+        selected_idx.0 += 1;
+    }
+}
+
+pub fn select_by_cursor(
+    query: Query<(&Interaction, &GameIndex), Changed<Interaction>>,
+    mut selected_idx: ResMut<SelectedIndex>,
+) {
+    for (interaction, idx) in query.iter() {
+        if *interaction == Interaction::Clicked {
+            selected_idx.0 = idx.0;
+        }
+    }
+}
+
+pub fn run_by_keybord_sys(
+    key_input: Res<Input<KeyCode>>,
+    selected_idx: Res<SelectedIndex>,
+    games: Res<Games>,
+) {
+    if key_input.just_pressed(KeyCode::Return) {
+        crate::core::run_game(&selected_idx, &games);
     }
 }
