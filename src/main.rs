@@ -34,14 +34,22 @@ fn main() {
         .add_system(select_by_cursor)
         .add_system(run_by_keybord_sys)
         .add_system(handle_play_button)
-        .add_system(update_title_text.with_run_criteria(selected_idx_changed))
-        .add_system(update_desc_text.with_run_criteria(selected_idx_changed))
+        .add_system(
+            update_title_text
+                .with_run_criteria(selected_idx_changed)
+                .before(adjust_title_size),
+        )
+        .add_system(
+            update_desc_text
+                .with_run_criteria(selected_idx_changed)
+                .before(adjust_description_size),
+        )
         .add_system(update_author_text.with_run_criteria(selected_idx_changed))
         .add_system(update_screenshot.with_run_criteria(selected_idx_changed))
         .add_system(game_cards_ui)
         .add_system(fit_screenshot)
         .add_system(update_text_bg)
-        .add_system(adjust_title_size.after(update_title_text))
-        .add_system(adjust_description_size.after(update_desc_text))
+        .add_system(adjust_title_size)
+        .add_system(adjust_description_size)
         .run();
 }
