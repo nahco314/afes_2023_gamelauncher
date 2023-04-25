@@ -14,7 +14,7 @@ fn main() {
                 width: 1600.,
                 height: 900.,
                 resizable: true,
-                title: "Afes 2022 Game Launcher".to_owned(),
+                title: "Game Launcher".to_owned(),
                 resize_constraints: WindowResizeConstraints {
                     min_width: 960.,
                     min_height: 540.,
