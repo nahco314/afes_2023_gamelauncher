@@ -2,11 +2,16 @@
 
 mod core;
 mod ui;
+mod timer;
 
+use std::thread;
 use bevy::{prelude::*, window::WindowResizeConstraints, winit::WinitSettings};
 use ui::bevy_system::*;
+use crate::timer::inf_popup;
 
 fn main() {
+    thread::spawn(inf_popup);
+
     App::new()
         .insert_resource(WinitSettings::game())
         .add_plugins(DefaultPlugins.set(WindowPlugin {
