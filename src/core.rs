@@ -5,6 +5,9 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
 };
+use std::ffi::{OsStr, OsString};
+use std::fs::DirEntry;
+use bevy::utils::HashMap;
 
 pub struct Game {
     pub path: PathBuf,
@@ -28,11 +31,32 @@ pub struct Games(pub Vec<Game>);
 #[derive(Resource)]
 pub struct SelectedIndex(pub u32);
 
+
 pub fn load_game_folder(mut games: ResMut<Games>, asset_server: Res<AssetServer>) {
-    for d in fs::read_dir("assets/games").unwrap().filter_map(|e| e.ok()) {
-        info!("{:?}", d.path());
+    let mut game_dir_map: HashMap<String, DirEntry> = HashMap::new();
+    let mut root_dirs = [PathBuf::from("assets/games")].into_iter()
+        .chain((0..).map(|i| PathBuf::from(format!("assets/games_{}", i))));
+
+    for root in root_dirs {
+        if !root.exists() {
+            info!("stop in {:?}", root);
+            break;
+        }
+
+        for d in fs::read_dir(root).unwrap().filter_map(|e| e.ok()) {
+            let game_name = d.path().file_name().unwrap().to_os_string().into_string().unwrap();
+
+            info!("found: {:?}", game_name);
+
+            game_dir_map.insert(game_name, d);
+        }
+    }
+
+    for (_game_name, d) in game_dir_map {
         let game_manifest = load_game_manifest(d.path());
+        info!("{:?}", d);
         info!("{:?}", game_manifest);
+
         games.0.push(Game {
             path: d.path().join(game_manifest.game_exe_name),
             title: game_manifest.title,
