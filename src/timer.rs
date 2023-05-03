@@ -6,14 +6,11 @@ use std::string::ToString;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-const POPUP_EVERY_N_SEC: u64 = 5;
+use winapi::um::winuser::{MessageBoxW, MB_OK};
+use std::ptr;
 
-static BAT_CONTENT: &str = r#"
-chcp 65001 >nul
-@powershell -Command "Add-Type -AssemblyName System.Windows.Forms;$result = [System.Windows.Forms.MessageBox]::Show(\"メッセージ文1`nメッセージ文2`nメッセージ文3\", 'タイトル', 'YesNoCancel', 'Asterisk');exit $result;"
-@echo 戻り値は %ERRORLEVEL% です
-pause
-"#;
+const POPUP_EVERY_N_SEC: u64 = 300;
+
 
 pub fn inf_popup() {
     let mut start = Instant::now();
@@ -22,16 +19,13 @@ pub fn inf_popup() {
         sleep(Duration::from_secs(1));
 
         if start.elapsed() >= Duration::from_secs(POPUP_EVERY_N_SEC) {
-            let mut f = File::create(Path::new("./b.bat")).unwrap();
-            write!(f, "{}", BAT_CONTENT).unwrap();
-
-            f.seek(SeekFrom::Start(0)).unwrap();
-
-            let mut game_cmd = Command::new("./b.bat");
-            game_cmd.current_dir("./");
-            game_cmd.spawn().expect("failed to show dialog");
-
+            unsafe { MessageBoxW(ptr::null_mut(), encode("混雑しているので、1人5分程度で交代してください。").as_ptr(), encode("お知らせ").as_ptr(), MB_OK); }
+            
             start = Instant::now();
         }
     }
+}
+
+fn encode(s: &str) -> Vec<u16> {
+    s.encode_utf16().chain(Some(0)).collect()
 }
